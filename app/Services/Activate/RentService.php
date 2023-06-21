@@ -6,6 +6,7 @@ use App\Dto\BotDto;
 use App\Dto\BotFactory;
 use App\Models\Activate\SmsCountry;
 use App\Models\Bot\SmsBot;
+use App\Models\Order\SmsOrder;
 use App\Models\Rent\RentOrder;
 use App\Models\User\SmsUser;
 use App\Services\External\BottApi;
@@ -127,16 +128,18 @@ class RentService extends MainService
             throw new RuntimeException('Пополните баланс в боте..');
         }
 
+        $resultRequest = $smsActivate->getRentNumber($service, $country->org_id, $time, $url);
+        $end_time = strtotime($resultRequest['phone']['endDate']);
+
         // Попытаться списать баланс у пользователя
         $result = BottApi::subtractBalance($botDto, $userData, $amountFinal, 'Списание баланса для аренды номера.');
 
         // Неудача
         if (!$result['result']) {
+            $result = $smsActivate->setRentStatus($resultRequest['phone']['id'], RentOrder::ACCESS_CANCEL);
             throw new RuntimeException('При списании баланса произошла ошибка: ' . $result['message']);
         }
 
-        $resultRequest = $smsActivate->getRentNumber($service, $country->org_id, $time, $url);
-        $end_time = strtotime($resultRequest['phone']['endDate']);
 
         $data = [
             'bot_id' => $botDto->id,
