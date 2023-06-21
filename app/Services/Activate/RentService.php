@@ -327,12 +327,19 @@ class RentService extends MainService
 
         $new_codes = intval(preg_replace('/[^0-9]+/', '', $codes), 10);
 
-        $new_codes = json_encode($new_codes);
+        $new_codes = (string) $new_codes;
 
-        if($rentOrder->codes == null)
-            $rentOrder->codes = $new_codes;
-        else
-            $rentOrder->codes =+ $new_codes;
+
+
+        if($rentOrder->codes == null){
+            $update_codes[] = $new_codes;
+            $rentOrder->codes = $update_codes;
+        }else{
+            $update_codes[] = $rentOrder->codes;
+            $update_codes[] = $new_codes;
+            $rentOrder->codes = $update_codes;
+        }
+
 
 
 
