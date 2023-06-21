@@ -321,8 +321,9 @@ class RentService extends MainService
         $rentOrder = RentOrder::query()->where(['org_id' => $rent_org_id])->first();
 
 //        $str_code = 'Ваш код подтверждения: 107-981. Наберите его в поле ввода.';
-        $codes = explode(' ', $codes);
-        $codes = $codes[3];
+        //926840 – код для входа в профиль CберМаркета
+//        $codes = explode(' ', $codes);
+//        $codes = $codes[3];
         $update_codes = $rentOrder->codes . ' ' . $codes;
 
         $rentOrder->codes = $update_codes;
