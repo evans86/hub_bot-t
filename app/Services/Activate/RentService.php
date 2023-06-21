@@ -335,7 +335,7 @@ class RentService extends MainService
             $update_codes[] = $new_codes;
             $rentOrder->codes = $update_codes;
         }else{
-            $update_codes[] = $rentOrder->codes;
+            $update_codes = $rentOrder->codes;
             $update_codes[] = $new_codes;
             $rentOrder->codes = $update_codes;
         }
