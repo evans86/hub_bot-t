@@ -324,9 +324,16 @@ class RentService extends MainService
         //926840 – код для входа в профиль CберМаркета
 //        $codes = explode(' ', $codes);
 //        $codes = $codes[3];
+
         $new_codes = intval(preg_replace('/[^0-9]+/', '', $codes), 10);
 
-        $rentOrder->codes =+ $new_codes;
+        $new_codes = json_encode($new_codes);
+
+        if($rentOrder->codes == null)
+            $rentOrder->codes = $new_codes;
+        else
+            $rentOrder->codes =+ $new_codes;
+
 
 
 
