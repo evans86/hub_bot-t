@@ -330,16 +330,14 @@ class RentService extends MainService
         $new_codes = (string) $new_codes;
 
 
-
         if($rentOrder->codes == null){
             $update_codes[] = $new_codes;
             $rentOrder->codes = $update_codes;
         }else{
-            array_push($rentOrder->codes, $new_codes);
+            $update_codes = $rentOrder->codes;
+            $update_codes = array_push($update_codes, $new_codes);
+            $rentOrder->codes = $update_codes;
         }
-
-
-
 
 
 //        if($rentOrder->codes == null){
