@@ -325,13 +325,19 @@ class RentService extends MainService
 //        $codes = explode(' ', $codes);
 //        $codes = $codes[3];
         $codes = 'fgbdrfgs 567-765 dsgtrd';
+
         $new_codes = intval(preg_replace('/[^0-9]+/', '', $codes), 10);
 
-        $update_codes = [];
+        if($rentOrder->codes == null){
+            $update_codes[] =+ $new_codes;
+            $rentOrder->codes = $update_codes;
+        }else{
+            $rentOrder->codes =+ $new_codes;
+        }
 
-        $update_codes = $rentOrder->codes . ' ' . $new_codes;
+//        $update_codes = $rentOrder->codes . ' ' . $new_codes;
 
-        $rentOrder->codes = $update_codes;
+
         $rentOrder->codes_id = $codes_id;
         $rentOrder->codes_date = $codes_date;
 
