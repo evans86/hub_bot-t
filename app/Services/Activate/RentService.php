@@ -326,8 +326,8 @@ class RentService extends MainService
 //        $codes = $codes[3];
         $new_codes = intval(preg_replace('/[^0-9]+/', '', $codes), 10);
 
-        $update_codes[] = $rentOrder->codes;
-        $update_codes[] =+ $new_codes;
+        $rentOrder->codes =+ $new_codes;
+
 
 
 //        if($rentOrder->codes == null){
@@ -339,7 +339,7 @@ class RentService extends MainService
 
 //        $update_codes = $rentOrder->codes . ' ' . $new_codes;
 
-        $rentOrder->codes = $update_codes;
+//        $rentOrder->codes = $update_codes;
         $rentOrder->codes_id = $codes_id;
         $rentOrder->codes_date = $codes_date;
 
