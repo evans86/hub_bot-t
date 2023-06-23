@@ -24,13 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-/**
- * Роуты API (страны, операторы, сервисы), ресурсный подход
- */
-Route::resources([
-    'countries' => CountryController::class,
-    'services' => ProductController::class,
-]);
+Route::get('countries', [CountryController::class, 'getCountries']);
+Route::get('services', [ProductController::class, 'getServices']);
 
 /**
  * Роуты API мультисервис

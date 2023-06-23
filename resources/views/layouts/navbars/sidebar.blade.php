@@ -1,8 +1,8 @@
 <div class="sidebar">
     <div class="sidebar-wrapper">
         <div class="logo">
-            <a href="/" class="simple-text logo-mini">{{ __('AC') }}</a>
-            <a href="/" class="simple-text logo-normal">{{ __('Activate') }}</a>
+            <a href="/" class="simple-text logo-mini">{{ __('HB') }}</a>
+            <a href="/" class="simple-text logo-normal">{{ __('HUB') }}</a>
         </div>
         <ul class="nav">
             <li @if ($pageSlug == 'countries') class="active " @endif>
@@ -11,12 +11,12 @@
                     <p>{{ __('Список стран') }}</p>
                 </a>
             </li>
-            <li @if ($pageSlug == 'products') class="active " @endif>
-                <a href="{{ route('activate.product.index') }}">
-                    <i class="tim-icons icon-notes"></i>
-                    <p>{{ __('Список сервисов') }}</p>
-                </a>
-            </li>
+{{--            <li @if ($pageSlug == 'products') class="active " @endif>--}}
+{{--                <a href="{{ route('activate.product.index') }}">--}}
+{{--                    <i class="tim-icons icon-notes"></i>--}}
+{{--                    <p>{{ __('Список сервисов') }}</p>--}}
+{{--                </a>--}}
+{{--            </li>--}}
             <li @if ($pageSlug == 'users') class="active " @endif>
                 <a href="{{ route('users.index') }}">
                     <i class="tim-icons icon-single-02"></i>
@@ -29,12 +29,12 @@
                     <p>{{ __('Заказы') }}</p>
                 </a>
             </li>
-            <li @if ($pageSlug == 'rents') class="active " @endif>
-                <a href="{{ route('activate.rent.index') }}">
-                    <i class="tim-icons icon-spaceship"></i>
-                    <p>{{ __('Аренды') }}</p>
-                </a>
-            </li>
+{{--            <li @if ($pageSlug == 'rents') class="active " @endif>--}}
+{{--                <a href="{{ route('activate.rent.index') }}">--}}
+{{--                    <i class="tim-icons icon-spaceship"></i>--}}
+{{--                    <p>{{ __('Аренды') }}</p>--}}
+{{--                </a>--}}
+{{--            </li>--}}
             <li @if ($pageSlug == 'bots') class="active " @endif>
                 <a href="{{ route('activate.bot.index') }}">
                     <i class="tim-icons icon-controller"></i>

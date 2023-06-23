@@ -74,13 +74,15 @@ class ProductService extends MainService
         $result = [];
         foreach ($services as $key => $service) {
 
-            $price = $service["cost"];
+            $count = reset($service);
+            $price = key($service);
+
             $pricePercent = $price + ($price * ($bot->percent / 100));
 
             array_push($result, [
                 'name' => $key,
                 'image' => 'https://smsactivate.s3.eu-central-1.amazonaws.com/assets/ico/' . $key . '0.webp',
-                'count' => $service["count"],
+                'count' => $count,
                 'cost' => $pricePercent * 100,
             ]);
 

@@ -9,7 +9,7 @@
     <link rel="icon" href="{{ url('css/favicon.ico') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css' )}}">
     <link rel="stylesheet" href="{{ asset('css/flag-icon.css' )}}"/>
-    <title>Activate</title>
+    <title>Hub</title>
     <script src="{{ asset('js/app.js') }}" defer></script>
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
