@@ -200,8 +200,8 @@ class OrderService extends MainService
         ];
 
         $order = SmsOrder::create($data);
-        $result = $smsActivate->setStatus($order, SmsOrder::ACCESS_RETRY_GET);
-        $result = $this->getStatus($order->org_id, $botDto);
+//        $result = $smsActivate->setStatus($order, SmsOrder::ACCESS_RETRY_GET);
+//        $result = $this->getStatus($order->org_id, $botDto);
 
         $result = [
             'id' => $order->org_id,
