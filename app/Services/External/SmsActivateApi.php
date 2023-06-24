@@ -100,7 +100,7 @@ class SmsActivateApi
             $requestParam['forward'] = $forward;
         }
 
-        return $this->request($requestParam, 'POST', null, 1);
+        return $this->request($requestParam, 'POST', null, 12);
     }
 
     public function getStatus($id)
@@ -239,6 +239,11 @@ class SmsActivateApi
             ]);
 
             $result = $response->getBody()->getContents();
+
+            if($getNumber == 12){
+                $parsedResponse = explode(':', $result);
+                return OrdersHelper::requestArray($parsedResponse[0]);
+            }
 
             if ($getNumber == 10) {
                 $convert_result = explode(':', $result);
