@@ -351,17 +351,16 @@ class OrderService extends MainService
                         $sms = $orderCode;
                         if (is_null($sms))
                             break;
-                        $sms = json_encode($sms);
+                        $sms = json_decode($sms);
                         if (is_null($order->codes)) {
                             BottApi::createOrder($botDto, $userData, $order->price_final,
                                 'Заказ активации для номера ' . $order->phone .
                                 ' с смс: ' . $sms);
                         }
 
-                        $sms_Arr = [];
-                        $sms_arr = array_push($sms_Arr, $sms);
+                        $sms_Arr[] = $sms;
 
-                        $order->codes = $sms_arr;
+                        $order->codes = $sms_Arr;
                         $order->status = $resultStatus;
                         $order->save();
                         break;
