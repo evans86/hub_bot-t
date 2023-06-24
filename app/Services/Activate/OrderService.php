@@ -365,10 +365,10 @@ class OrderService extends MainService
                         $order->status = $resultStatus;
                         $order->save();
                         break;
+                    default:
+                        throw new RuntimeException('неизвестный статус ' . $resultStatus);
                 }
                 break;
-            default:
-                throw new RuntimeException('неизвестный статус');
         }
     }
 
