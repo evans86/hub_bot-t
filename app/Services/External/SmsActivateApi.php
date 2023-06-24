@@ -227,6 +227,8 @@ class SmsActivateApi
 
             if ($getNumber == 11){
                 $result = file_get_contents("$this->url?$serializedData");
+                $json_string = stripslashes(html_entity_decode($result));
+                $result = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json_string), true);
                 return $result;
             }
             if ($getNumber == 10) {
