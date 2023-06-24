@@ -139,25 +139,33 @@ class OrderService extends MainService
      * @throws \Exception
      */
     public
-    function create(array $userData, BotDto $botDto, string $country_id): array
+    function create(BotDto $botDto, string $country_id, string $service, array $userData): array
     {
         // Создать заказ по апи
         $smsActivate = new SmsActivateApi($botDto->api_key, $botDto->resource_link);
         $user = SmsUser::query()->where(['telegram_id' => $userData['user']['telegram_id']])->first();
+//        $user = SmsUser::query()->where(['id' => 1])->first();
         if (is_null($user)) {
             throw new RuntimeException('not found user');
         }
-        if (empty($user->service))
-            throw new RuntimeException('Choose service pls');
+//        if (empty($user->service))
+//            throw new RuntimeException('Choose service pls');
 
-        $serviceResult = $smsActivate->getNumberV2(
-            $user->service,
+        $serviceResult = $smsActivate->getNumber(
+            $service,
             $country_id
         );
-        $org_id = intval($serviceResult['activationId']);
+
+        $org_id = intval($serviceResult[1]);
+
+        $service_price = $smsActivate->getPrices($country_id, $service);
+        $service_prices = $service_price[$country_id][$service];
+        $price = key($service_prices);
+
         // Из него получить цену
-        $amountStart = intval(floatval($serviceResult['activationCost']) * 100);
+        $amountStart = (int)ceil(floatval($price) * 100);
         $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
+
         if ($amountFinal > $userData['money']) {
             $serviceResult = $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);
             throw new RuntimeException('Пополните баланс в боте');
@@ -165,7 +173,7 @@ class OrderService extends MainService
         // Попытаться списать баланс у пользователя
         $result = BottApi::subtractBalance($botDto, $userData, $amountFinal, 'Списание баланса для номера '
             . $serviceResult['phoneNumber']);
-
+//
         // Неудача отмена на сервисе
         if (!$result['result']) {
             $serviceResult = $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);
@@ -174,21 +182,20 @@ class OrderService extends MainService
 
         // Удача создание заказа в бд
         $country = SmsCountry::query()->where(['org_id' => $country_id])->first();
-        $dateTime = new \DateTime($serviceResult['activationTime']);
-        $dateTime = $dateTime->format('U');
-        $dateTime = intval($dateTime);
+        $dateTime = intval(time());
+
         $data = [
             'bot_id' => $botDto->id,
             'user_id' => $user->id,
-            'service' => $user->service,
+            'service' => $service,
             'country_id' => $country->id,
             'org_id' => $org_id,
-            'phone' => $serviceResult['phoneNumber'],
+            'phone' => $serviceResult[2],
             'codes' => null,
             'status' => SmsOrder::STATUS_WAIT_CODE, //4
             'start_time' => $dateTime,
             'end_time' => $dateTime + 1177,
-            'operator' => $serviceResult['activationOperator'],
+            'operator' => null,
             'price_final' => $amountFinal,
             'price_start' => $amountStart,
         ];
@@ -199,13 +206,13 @@ class OrderService extends MainService
 
         $result = [
             'id' => $order->org_id,
-            'phone' => $serviceResult['phoneNumber'],
+            'phone' => $serviceResult[2],
             'time' => $dateTime,
             'status' => $order->status,
             'codes' => null,
             'country' => $country->org_id,
-            'operator' => $serviceResult['activationOperator'],
-            'service' => $user->service,
+            'operator' => null,
+            'service' => $service,
             'cost' => $amountFinal
         ];
         return $result;
@@ -220,7 +227,7 @@ class OrderService extends MainService
      * @return mixed
      */
     public
-    function cancel(array $userData, BotDto $botDto, SmsOrder $order)
+    function cancel(BotDto $botDto, SmsOrder $order, array $userData)
     {
         $smsActivate = new SmsActivateApi($botDto->api_key, $botDto->resource_link);
         // Проверить уже отменёный
@@ -304,8 +311,8 @@ class OrderService extends MainService
 
         $result = $this->getStatus($order->org_id, $botDto);
 
-        if ($result != SmsOrder::STATUS_WAIT_RETRY)
-            throw new RuntimeException('При проверке статуса произошла ошибка, вернулся статус: ' . $result);
+//        if ($result != SmsOrder::STATUS_WAIT_RETRY)
+//            throw new RuntimeException('При проверке статуса произошла ошибка, вернулся статус: ' . $result);
 
         $resultSet = $order->status = SmsOrder::STATUS_WAIT_RETRY;
 
@@ -322,7 +329,7 @@ class OrderService extends MainService
      * @return void
      */
     public
-    function order(array $userData, BotDto $botDto, SmsOrder $order): void
+    function order(BotDto $botDto, SmsOrder $order, array $userData = null): void
     {
         switch ($order->status) {
             case SmsOrder::STATUS_CANCEL:
@@ -339,37 +346,29 @@ class OrderService extends MainService
                     case SmsOrder::STATUS_WAIT_CODE:
                     case SmsOrder::STATUS_WAIT_RETRY:
                         $smsActivate = new SmsActivateApi($botDto->api_key, $botDto->resource_link);
-                        $activateActiveOrders = $smsActivate->getActiveActivations();
-                        if (key_exists('activeActivations', $activateActiveOrders)) {
-                            $activateActiveOrders = $activateActiveOrders['activeActivations'];
+                        $orderCode = $smsActivate->getCode($order->org_id);
 
-                            foreach ($activateActiveOrders as $activateActiveOrder) {
-                                $order_id = $activateActiveOrder['activationId'];
-                                // Есть ли совпадение
-                                if ($order_id == $order->org_id) {
-                                    // Есть ли смс
-                                    $sms = $activateActiveOrder['smsCode'];
-                                    if (is_null($sms))
-                                        break;
-                                    $sms = json_encode($sms);
-                                    if (is_null($order->codes)) {
-                                        BottApi::createOrder($botDto, $userData, $order->price_final,
-                                            'Заказ активации для номера ' . $order->phone .
-                                            ' с смс: ' . $sms);
-                                    }
-                                    $order->codes = $sms;
-                                    $order->status = $resultStatus;
-                                    $order->save();
-                                    break;
-                                }
-                            }
+                        // Есть ли смс
+                        $sms = $orderCode;
+                        if (is_null($sms))
+                            break;
+                        $sms = json_encode($sms);
+                        if (is_null($order->codes)) {
+                            BottApi::createOrder($botDto, $userData, $order->price_final,
+                                'Заказ активации для номера ' . $order->phone .
+                                ' с смс: ' . $sms);
                         }
+                        $order->codes = $sms;
+                        $order->status = $resultStatus;
+                        $order->save();
                         break;
-                    default:
-                        throw new RuntimeException('неизвестный статус: ' . $resultStatus);
                 }
+                break;
+            default:
+                throw new RuntimeException('неизвестный статус');
         }
     }
+
 
     /**
      * Крон обновление статусов

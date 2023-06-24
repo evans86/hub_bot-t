@@ -150,6 +150,8 @@ class OrderController extends Controller
             $user = SmsUser::query()->where(['telegram_id' => $request->user_id])->first();
             if (is_null($request->country))
                 return ApiHelpers::error('Not found params: country');
+            if (is_null($request->service))
+                return ApiHelpers::error('Not found params: service');
             if (is_null($request->user_secret_key))
                 return ApiHelpers::error('Not found params: user_secret_key');
             if (is_null($request->public_key))
@@ -171,12 +173,13 @@ class OrderController extends Controller
                 throw new RuntimeException('Пополните баланс в боте');
             }
             $country = SmsCountry::query()->where(['org_id' => $request->country])->first();
-            $service = $user->service;
+//            $service = $user->service;
 
             $result = $this->orderService->create(
-                $result['data'],
                 $botDto,
                 $country->org_id,
+                $request->service,
+                $result['data']
             );
 
             return ApiHelpers::success($result);
@@ -227,7 +230,11 @@ class OrderController extends Controller
             }
 
 
-            $this->orderService->order($result['data'], $botDto, $order);
+            $this->orderService->order(
+                $botDto,
+                $order,
+                $result['data']
+            );
 
             $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
             return ApiHelpers::success(OrderResource::generateOrderArray($order));
@@ -375,7 +382,11 @@ class OrderController extends Controller
                 throw new RuntimeException($result['message']);
             }
 
-            $result = $this->orderService->cancel($result['data'], $botDto, $order);
+            $result = $this->orderService->cancel(
+                $botDto,
+                $order,
+                $result['data']
+            );
 
             $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
             return ApiHelpers::success(OrderResource::generateOrderArray($order));

@@ -3,6 +3,7 @@
 namespace App\Services\External;
 
 use App\Helpers\OrdersHelper;
+use App\Models\Order\SmsOrder;
 use GuzzleHttp\Client;
 use http\Exception\InvalidArgumentException;
 
@@ -55,7 +56,7 @@ class SmsActivateApi
         return $response;
     }
 
-    public function getNumber($service, $country = null, $forward = 0, $operator = null, $ref = null)
+    public function getNumber($service, $country = null, $forward = 0, $operator = null)
     {
         $requestParam = array('api_key' => $this->apiKey, 'action' => __FUNCTION__, 'service' => $service, 'forward' => $forward);
         if ($country) {
@@ -64,10 +65,7 @@ class SmsActivateApi
         if ($operator && ($country == 0 || $country == 1 || $country == 2)) {
             $requestParam['operator'] = $operator;
         }
-        if ($ref) {
-            $requestParam['ref'] = $ref;
-        }
-        return $this->request($requestParam, 'POST', null);
+        return $this->request($requestParam, 'GET', null, 10); //убрать десятку
     }
 
     public function getNumberV2($service, $country = null, $forward = 0, $operator = null)
@@ -108,6 +106,11 @@ class SmsActivateApi
     public function getStatus($id)
     {
         return $this->request(array('api_key' => $this->apiKey, 'action' => __FUNCTION__, 'id' => $id), 'GET', false, 1);
+    }
+
+    public function getCode($id)
+    {
+        return $this->request(array('api_key' => $this->apiKey, 'action' => 'getStatus', 'id' => $id), 'GET', false, 30);
     }
 
     public function getCountries()
@@ -222,10 +225,25 @@ class SmsActivateApi
 
         if ($method === 'GET') {
 
-            if($getNumber == 10){
+            if ($getNumber == 10) {
                 //для локального использования
-                $result = file_get_contents("$this->url?$serializedData");
-            }else{
+//                $result = file_get_contents("$this->url?$serializedData");
+
+                $client = new Client(['base_uri' => $this->url]);
+                $response = $client->get('?' . $serializedData);
+
+                $result = $response->getBody()->getContents();
+                $convert_result = explode(':', $result);
+
+                $check = OrdersHelper::requestArray($convert_result[0]);
+
+                if ($check) {
+                    throw new RequestError(OrdersHelper::requestArray($convert_result[0]));
+                }
+
+                return $convert_result;
+
+            } else {
                 //для домена
                 $client = new Client(['base_uri' => $this->url]);
                 $response = $client->get('?' . $serializedData, [
@@ -233,6 +251,36 @@ class SmsActivateApi
                 ]);
 
                 $result = $response->getBody()->getContents();
+
+                //
+                if ($getNumber == 20) {
+                    $convert_result = explode(':', $result);
+
+                    $check = OrdersHelper::requestArray($convert_result[0]);
+
+                    if ($check) {
+                        throw new RequestError(OrdersHelper::requestArray($convert_result[0]));
+                    }
+
+                    return $convert_result;
+                }
+                //для получения кодов
+                if ($getNumber == 30) {
+                    $convert_result = explode(':', $result);
+
+                    if ($convert_result[0] == 'BAD_ACTION')
+                        throw new \Exception('Общее неправильное формирование запроса');
+                    if ($convert_result[0] == 'NO_ACTIVATION')
+                        throw new \Exception('Активации не существует.');
+                    if ($convert_result[0] == 'STATUS_WAIT_CODE')
+                        return null;
+                    if ($convert_result[0] == 'STATUS_WAIT_RETRY')
+                        return $convert_result[1];
+                    if ($convert_result[0] == 'STATUS_OK')
+                        return $convert_result[1];
+
+                    return $convert_result;
+                }
             }
 
             if ($getNumber == 3) {
@@ -257,7 +305,6 @@ class SmsActivateApi
             );
             $context = stream_context_create($options);
             $result = file_get_contents($this->url, false, $context);
-//            dd($result);
             if ($getNumber == 1) {
                 return OrdersHelper::requestArray($result);
             }
@@ -343,7 +390,7 @@ class SmsActivateApi
 //            if ($getNumber == 3){
 //                return $result['price'];
 //            }else{
-                return $result;
+            return $result;
 
         }
         return $result;
