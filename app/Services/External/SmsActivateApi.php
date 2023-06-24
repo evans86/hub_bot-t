@@ -65,7 +65,7 @@ class SmsActivateApi
         if ($operator && ($country == 0 || $country == 1 || $country == 2)) {
             $requestParam['operator'] = $operator;
         }
-        return $this->request($requestParam, 'GET', null, 10); //убрать десятку
+        return $this->request($requestParam, 'GET', null); //убрать десятку
     }
 
     public function getNumberV2($service, $country = null, $forward = 0, $operator = null)
@@ -115,7 +115,7 @@ class SmsActivateApi
 
     public function getCountries()
     {
-        return $this->request(array('api_key' => $this->apiKey, 'action' => __FUNCTION__), 'GET', true, 10);
+        return $this->request(array('api_key' => $this->apiKey, 'action' => __FUNCTION__), 'GET', true, 11);
     }
 
     public function getActiveActivations()
@@ -225,9 +225,11 @@ class SmsActivateApi
 
         if ($method === 'GET') {
 
+            if ($getNumber == 11){
+                $result = file_get_contents("$this->url?$serializedData");
+                return $result;
+            }
             if ($getNumber == 10) {
-                //для локального использования
-//                $result = file_get_contents("$this->url?$serializedData");
 
                 $client = new Client(['base_uri' => $this->url]);
                 $response = $client->get('?' . $serializedData);
