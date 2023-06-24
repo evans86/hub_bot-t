@@ -171,8 +171,7 @@ class OrderService extends MainService
             throw new RuntimeException('Пополните баланс в боте');
         }
         // Попытаться списать баланс у пользователя
-        $result = BottApi::subtractBalance($botDto, $userData, $amountFinal, 'Списание баланса для номера '
-            . $serviceResult['phoneNumber']);
+        $result = BottApi::subtractBalance($botDto, $userData, $amountFinal, 'Списание баланса для актвиации номера.');
 //
         // Неудача отмена на сервисе
         if (!$result['result']) {
