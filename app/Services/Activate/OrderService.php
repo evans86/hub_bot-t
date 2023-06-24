@@ -357,7 +357,11 @@ class OrderService extends MainService
                                 'Заказ активации для номера ' . $order->phone .
                                 ' с смс: ' . $sms);
                         }
-                        $order->codes = $sms;
+
+                        $sms_Arr[] = $sms;
+
+
+                        $order->codes = $sms_Arr;
                         $order->status = $resultStatus;
                         $order->save();
                         break;
