@@ -359,10 +359,7 @@ class OrderService extends MainService
                                 ' с смс: ' . $sms);
                         }
 
-                        $sms_Arr[] = $sms;
-
-                        $order->codes = $sms_Arr;
-                        $order->codes = json_decode($order->codes);
+                        $order->codes = $sms;
                         $order->status = $resultStatus;
                         $order->save();
                         break;
