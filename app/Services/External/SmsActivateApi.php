@@ -112,7 +112,7 @@ class SmsActivateApi
 
     public function getCountries()
     {
-        return $this->request(array('api_key' => $this->apiKey, 'action' => __FUNCTION__), 'GET', true);
+        return $this->request(array('api_key' => $this->apiKey, 'action' => __FUNCTION__), 'GET', true, 10);
     }
 
     public function getActiveActivations()
@@ -222,14 +222,18 @@ class SmsActivateApi
 
         if ($method === 'GET') {
 
-            $client = new Client(['base_uri' => $this->url]);
-            $response = $client->get('?' . $serializedData, [
-                'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959'
-            ]);
+            if($getNumber == 10){
+                //для локального использования
+                $result = file_get_contents("$this->url?$serializedData");
+            }else{
+                //для домена
+                $client = new Client(['base_uri' => $this->url]);
+                $response = $client->get('?' . $serializedData, [
+                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959'
+                ]);
 
-            $result = $response->getBody()->getContents();
-
-//            $result = file_get_contents("$this->url?$serializedData");
+                $result = $response->getBody()->getContents();
+            }
 
             if ($getNumber == 3) {
                 $parsedResponse = explode(':', $result);
