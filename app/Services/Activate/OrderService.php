@@ -399,9 +399,9 @@ class OrderService extends MainService
             if (is_null($order->codes)) {
                 echo 'cancel_start' . PHP_EOL;
                 $this->cancel(
-                    $result['data'],
                     $botDto,
-                    $order
+                    $order,
+                    $result['data'],
                 );
                 echo 'cancel_finish' . PHP_EOL;
             } else {
