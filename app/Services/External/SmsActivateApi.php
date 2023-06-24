@@ -65,7 +65,7 @@ class SmsActivateApi
         if ($operator && ($country == 0 || $country == 1 || $country == 2)) {
             $requestParam['operator'] = $operator;
         }
-        return $this->request($requestParam, 'GET', null); //убрать десятку
+        return $this->request($requestParam, 'GET', null, 10); //убрать десятку
     }
 
     public function getNumberV2($service, $country = null, $forward = 0, $operator = null)
@@ -225,18 +225,22 @@ class SmsActivateApi
 
         if ($method === 'GET') {
 
-            if ($getNumber == 11){
+            if ($getNumber == 11) {
                 $result = file_get_contents("$this->url?$serializedData");
                 $json_string = stripslashes(html_entity_decode($result));
                 $result = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json_string), true);
                 return $result;
             }
+
+            //для домена
+            $client = new Client(['base_uri' => $this->url]);
+            $response = $client->get('?' . $serializedData, [
+                'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959'
+            ]);
+
+            $result = $response->getBody()->getContents();
+
             if ($getNumber == 10) {
-
-                $client = new Client(['base_uri' => $this->url]);
-                $response = $client->get('?' . $serializedData);
-
-                $result = $response->getBody()->getContents();
                 $convert_result = explode(':', $result);
 
                 $check = OrdersHelper::requestArray($convert_result[0]);
@@ -246,45 +250,36 @@ class SmsActivateApi
                 }
 
                 return $convert_result;
+            }
 
-            } else {
-                //для домена
-                $client = new Client(['base_uri' => $this->url]);
-                $response = $client->get('?' . $serializedData, [
-                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959'
-                ]);
+            //
+            if ($getNumber == 20) {
+                $convert_result = explode(':', $result);
 
-                $result = $response->getBody()->getContents();
+                $check = OrdersHelper::requestArray($convert_result[0]);
 
-                //
-                if ($getNumber == 20) {
-                    $convert_result = explode(':', $result);
-
-                    $check = OrdersHelper::requestArray($convert_result[0]);
-
-                    if ($check) {
-                        throw new RequestError(OrdersHelper::requestArray($convert_result[0]));
-                    }
-
-                    return $convert_result;
+                if ($check) {
+                    throw new RequestError(OrdersHelper::requestArray($convert_result[0]));
                 }
-                //для получения кодов
-                if ($getNumber == 30) {
-                    $convert_result = explode(':', $result);
 
-                    if ($convert_result[0] == 'BAD_ACTION')
-                        throw new \Exception('Общее неправильное формирование запроса');
-                    if ($convert_result[0] == 'NO_ACTIVATION')
-                        throw new \Exception('Активации не существует.');
-                    if ($convert_result[0] == 'STATUS_WAIT_CODE')
-                        return null;
-                    if ($convert_result[0] == 'STATUS_WAIT_RETRY')
-                        return $convert_result[1];
-                    if ($convert_result[0] == 'STATUS_OK')
-                        return $convert_result[1];
+                return $convert_result;
+            }
+            //для получения кодов
+            if ($getNumber == 30) {
+                $convert_result = explode(':', $result);
 
-                    return $convert_result;
-                }
+                if ($convert_result[0] == 'BAD_ACTION')
+                    throw new \Exception('Общее неправильное формирование запроса');
+                if ($convert_result[0] == 'NO_ACTIVATION')
+                    throw new \Exception('Активации не существует.');
+                if ($convert_result[0] == 'STATUS_WAIT_CODE')
+                    return null;
+                if ($convert_result[0] == 'STATUS_WAIT_RETRY')
+                    return $convert_result[1];
+                if ($convert_result[0] == 'STATUS_OK')
+                    return $convert_result[1];
+
+                return $convert_result;
             }
 
             if ($getNumber == 3) {
@@ -312,6 +307,7 @@ class SmsActivateApi
             if ($getNumber == 1) {
                 return OrdersHelper::requestArray($result);
             }
+
             if (OrdersHelper::requestArray($result) == false) {
                 $parsedResult = json_decode($result, true);
                 return $parsedResult;
@@ -353,7 +349,8 @@ class SmsActivateApi
 //        return $parsedResponse[1];
     }
 
-    private function requestRent($data, $method, $parseAsJSON = null, $getNumber = null)
+    private
+    function requestRent($data, $method, $parseAsJSON = null, $getNumber = null)
     {
         $method = strtoupper($method);
 
