@@ -7,7 +7,7 @@
             <div class="card ">
                 <div class="card-header">
                     <h4 class="card-title"> Боты ({{ $allCount }})</h4>
-                    <h4 class="card-title"> Новых после 2023-05-05 21:01:28 ({{ $newBots }})</h4>
+                    <h4 class="card-title"> Новых после 2023-06-29 23:20:29 ({{ $newBots }})</h4>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
