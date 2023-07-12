@@ -72,7 +72,16 @@ class ProductService extends MainService
         $services = current($services);
 
         $result = [];
+
+        if (!is_null($bot->black))
+            $black_array = explode(',', $bot->black);
+
         foreach ($services as $key => $service) {
+
+            if (!is_null($bot->black)) {
+                if (in_array($key, $black_array))
+                    continue;
+            }
 
             $count = reset($service);
             $price = key($service);
