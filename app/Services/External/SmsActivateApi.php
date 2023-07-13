@@ -65,7 +65,7 @@ class SmsActivateApi
         if ($operator && ($country == 0 || $country == 1 || $country == 2)) {
             $requestParam['operator'] = $operator;
         }
-        return $this->request($requestParam, 'GET', null, ); //убрать десятку
+        return $this->request($requestParam, 'GET', null, 10); //убрать десятку
     }
 
     public function getNumberV2($service, $country = null, $forward = 0, $operator = null)
@@ -248,11 +248,11 @@ class SmsActivateApi
             if ($getNumber == 10) {
                 $convert_result = explode(':', $result);
 
-                $check = OrdersHelper::requestArray($convert_result[0]);
-
-                if ($check) {
-                    throw new RequestError(OrdersHelper::requestArray($convert_result[0]));
-                }
+//                $check = OrdersHelper::requestArray($convert_result[0]);
+//
+//                if ($check) {
+//                    throw new RequestError(OrdersHelper::requestArray($convert_result[0]));
+//                }
 
                 return $convert_result;
             }
