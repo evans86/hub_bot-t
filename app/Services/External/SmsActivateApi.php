@@ -65,7 +65,7 @@ class SmsActivateApi
         if ($operator && ($country == 0 || $country == 1 || $country == 2)) {
             $requestParam['operator'] = $operator;
         }
-        return $this->request($requestParam, 'GET', null, 20); //убрать десятку
+        return $this->request($requestParam, 'GET', null, ); //убрать десятку
     }
 
     public function getNumberV2($service, $country = null, $forward = 0, $operator = null)
