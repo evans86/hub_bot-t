@@ -355,8 +355,7 @@ class OrderService extends MainService
                         $sms = json_encode($sms);
                         if (is_null($order->codes)) {
                             BottApi::createOrder($botDto, $userData, $order->price_final,
-                                'Заказ активации для номера ' . $order->phone .
-                                ' с смс: ' . $sms . ' (Модуль Sms Hub)');
+                                'Заказ активации для номера ' . $order->phone . ' (Модуль Sms Hub)');
                         }
 
                         $order->codes = $sms;
