@@ -251,7 +251,7 @@ class SmsActivateApi
                 $check = OrdersHelper::requestArray($convert_result[0]);
 
                 if ($check) {
-                    throw new RequestError($result);
+                    throw new RequestError($convert_result);
                 }
 
                 return $convert_result;
