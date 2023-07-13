@@ -248,11 +248,11 @@ class SmsActivateApi
             if ($getNumber == 10) {
                 $convert_result = explode(':', $result);
 
-//                $check = OrdersHelper::requestArray($convert_result[0]);
-//
-//                if ($check) {
-//                    throw new RequestError(OrdersHelper::requestArray($convert_result[0]));
-//                }
+                $check = OrdersHelper::requestArray($convert_result[0]);
+
+                if ($check) {
+                    throw new RequestError($convert_result);
+                }
 
                 return $convert_result;
             }
