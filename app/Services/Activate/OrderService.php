@@ -11,6 +11,8 @@ use App\Models\User\SmsUser;
 use App\Services\External\BottApi;
 use App\Services\External\SmsActivateApi;
 use App\Services\MainService;
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use RuntimeException;
 
 class OrderService extends MainService
@@ -379,44 +381,68 @@ class OrderService extends MainService
     public
     function cronUpdateStatus(): void
     {
-        $statuses = [SmsOrder::STATUS_OK, SmsOrder::STATUS_WAIT_CODE, SmsOrder::STATUS_WAIT_RETRY];
+        try {
+            $statuses = [SmsOrder::STATUS_OK, SmsOrder::STATUS_WAIT_CODE, SmsOrder::STATUS_WAIT_RETRY];
 
-        $orders = SmsOrder::query()->whereIn('status', $statuses)
-            ->where('end_time', '<=', time())->get();
+            $orders = SmsOrder::query()->whereIn('status', $statuses)
+                ->where('end_time', '<=', time())->get();
 
-        echo "START count:" . count($orders) . PHP_EOL;
-        foreach ($orders as $key => $order) {
-            echo $order->id . PHP_EOL;
-            $bot = SmsBot::query()->where(['id' => $order->bot_id])->first();
+            echo "START count:" . count($orders) . PHP_EOL;
 
-            $botDto = BotFactory::fromEntity($bot);
-            $result = BottApi::get(
-                $order->user->telegram_id,
-                $botDto->public_key,
-                $botDto->private_key
-            );
-            echo $order->id . PHP_EOL;
+            $start_text = "Hub Start count: " . count($orders) . PHP_EOL;
+            $this->notifyTelegram($start_text);
 
+            foreach ($orders as $key => $order) {
+                echo $order->id . PHP_EOL;
+                $bot = SmsBot::query()->where(['id' => $order->bot_id])->first();
 
-            if (is_null($order->codes)) {
-                echo 'cancel_start' . PHP_EOL;
-                $this->cancel(
-                    $botDto,
-                    $order,
-                    $result['data'],
+                $botDto = BotFactory::fromEntity($bot);
+                $result = BottApi::get(
+                    $order->user->telegram_id,
+                    $botDto->public_key,
+                    $botDto->private_key
                 );
-                echo 'cancel_finish' . PHP_EOL;
-            } else {
-                echo 'confirm_start' . PHP_EOL;
-                $this->confirm(
-                    $botDto,
-                    $order
-                );
-                echo 'confirm_finish' . PHP_EOL;
+                echo $order->id . PHP_EOL;
+
+
+                if (is_null($order->codes)) {
+                    echo 'cancel_start' . PHP_EOL;
+                    $this->cancel(
+                        $botDto,
+                        $order,
+                        $result['data'],
+                    );
+                    echo 'cancel_finish' . PHP_EOL;
+                } else {
+                    echo 'confirm_start' . PHP_EOL;
+                    $this->confirm(
+                        $botDto,
+                        $order
+                    );
+                    echo 'confirm_finish' . PHP_EOL;
+                }
+                echo "FINISH" . $order->id . PHP_EOL;
             }
-            echo "FINISH" . $order->id . PHP_EOL;
 
+            $finish_text = "Hub finish count: " . count($orders) . PHP_EOL;
+            $this->notifyTelegram($finish_text);
+
+        } catch (\Exception $e) {
+            $this->notifyTelegram($e->getMessage());
         }
+    }
+
+    public function notifyTelegram($text)
+    {
+        $client = new Client();
+
+        $client->post('https://api.telegram.org/bot6331654488:AAEmDoHZLV6D3YYShrwdanKlWCbo9nBjQy4/sendMessage', [
+
+            RequestOptions::JSON => [
+                'chat_id' => 398981226,
+                'text' => $text,
+            ]
+        ]);
     }
 
     /**
