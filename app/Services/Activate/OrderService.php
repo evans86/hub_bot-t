@@ -161,7 +161,7 @@ class OrderService extends MainService
         $org_id = intval($serviceResult[1]);
 
         $service_price = $smsActivate->getPrices($country_id, $service);
-        $service_prices = $service_price[$contry_id][$service];
+        $service_prices = $service_price[$country_id][$service];
         $price = key($service_prices);
 
         // Из него получить цену
