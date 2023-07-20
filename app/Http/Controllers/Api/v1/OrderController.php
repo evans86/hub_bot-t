@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Dto\BotFactory;
 use App\Helpers\ApiHelpers;
+use App\Helpers\BotLogHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\api\OrderResource;
 use App\Models\Activate\SmsCountry;
@@ -73,7 +74,9 @@ class OrderController extends Controller
             return ApiHelpers::success($result);
 
         } catch (Exception $e) {
-            return ApiHelpers::errorNew($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Orders error');
         }
     }
 
@@ -125,7 +128,9 @@ class OrderController extends Controller
 
             return ApiHelpers::success($result);
         } catch (Exception $e) {
-            return ApiHelpers::error($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Create multi error');
         }
     }
 
@@ -184,7 +189,9 @@ class OrderController extends Controller
 
             return ApiHelpers::success($result);
         } catch (Exception $e) {
-            return ApiHelpers::error($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Create order error');
         }
     }
 
@@ -239,7 +246,9 @@ class OrderController extends Controller
             $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
             return ApiHelpers::success(OrderResource::generateOrderArray($order));
         } catch (RuntimeException $e) {
-            return ApiHelpers::errorNew($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Get order error');
         }
     }
 
@@ -288,7 +297,9 @@ class OrderController extends Controller
             $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
             return ApiHelpers::success(OrderResource::generateOrderArray($order));
         } catch (Exception $e) {
-            return ApiHelpers::errorNew($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Second Sms error');
         }
     }
 
@@ -337,7 +348,9 @@ class OrderController extends Controller
             $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
             return ApiHelpers::success(OrderResource::generateOrderArray($order));
         } catch (Exception $e) {
-            return ApiHelpers::errorNew($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Confirm order error');
         }
     }
 
@@ -391,7 +404,9 @@ class OrderController extends Controller
             $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
             return ApiHelpers::success(OrderResource::generateOrderArray($order));
         } catch (Exception $e) {
-            return ApiHelpers::errorNew($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Close order error');
         }
     }
 }

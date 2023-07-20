@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Dto\BotFactory;
 use App\Helpers\ApiHelpers;
+use App\Helpers\BotLogHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Bot\BotCreateRequest;
 use App\Http\Requests\Bot\BotGetRequest;
@@ -49,7 +50,9 @@ class BotController extends Controller
             );
             return ApiHelpers::success(BotFactory::fromEntity($bot)->getArray());
         } catch (\Exception $e) {
-            return ApiHelpers::error($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Module creation error');
         }
     }
 
@@ -67,7 +70,9 @@ class BotController extends Controller
                 return ApiHelpers::error('Not found module.');
             return ApiHelpers::success(BotFactory::fromEntity($bot)->getArray());
         } catch (\Exception $e) {
-            return ApiHelpers::error($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Module get error');
         }
     }
 
@@ -90,7 +95,9 @@ class BotController extends Controller
 
             return ApiHelpers::success($result);
         } catch (\Exception $e) {
-            return ApiHelpers::error($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Module get settings error');
         }
     }
 
@@ -107,7 +114,9 @@ class BotController extends Controller
             $bot = SmsBot::query()->where('public_key', $bot->public_key)->where('private_key', $bot->private_key)->first();
             return ApiHelpers::success(BotFactory::fromEntity($bot)->getArray());
         } catch (\Exception $e) {
-            return ApiHelpers::error($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Module update error');
         }
     }
 
@@ -123,7 +132,9 @@ class BotController extends Controller
             $this->botService->delete($request->public_key, $request->private_key);
             return ApiHelpers::success('OK');
         } catch (\Exception $e) {
-            return ApiHelpers::error($e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            \Log::error($e->getMessage());
+            return ApiHelpers::error('Module delete error');
         }
     }
 }
