@@ -2,7 +2,7 @@
 
 namespace App\Services\External;
 
-class RequestError extends \Exception
+class RequestError extends \RuntimeException
 {
     private $responseCode;
 

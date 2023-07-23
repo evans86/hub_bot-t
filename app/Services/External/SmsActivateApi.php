@@ -317,7 +317,7 @@ class SmsActivateApi
                 $parsedResult = json_decode($result, true);
                 return $parsedResult;
             } else {
-                throw new \Exception(OrdersHelper::requestArray($result));
+                throw new \RuntimeException(OrdersHelper::requestArray($result));
 //                return OrdersHelper::requestArray($result);
             }
 

@@ -42,8 +42,11 @@ class ProductController extends Controller
             $bot = SmsBot::query()->where('public_key', $request->public_key)->first();
             $products = $this->productService->getPricesCountry($bot);
             return ApiHelpers::success($products);
+        } catch (\RuntimeException $r) {
+            BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
+            return ApiHelpers::error($r->getMessage());
         } catch (\Exception $e) {
-            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
             \Log::error($e->getMessage());
             return ApiHelpers::error('Products error');
         }
@@ -66,9 +69,11 @@ class ProductController extends Controller
                 return ApiHelpers::error('Not found params: user_secret_key');
             $user = $this->userService->updateService($request->user_id, $request->service);
             return ApiHelpers::success(ProductResource::generateUserArray($user));
-
+        } catch (\RuntimeException $r) {
+            BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
+            return ApiHelpers::error($r->getMessage());
         } catch (\Exception $e) {
-            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
             \Log::error($e->getMessage());
             return ApiHelpers::error('Set service error');
         }
@@ -91,9 +96,11 @@ class ProductController extends Controller
 
             $countries = $this->productService->getServices($bot, $request->country);
             return ApiHelpers::success($countries);
-
+        } catch (\RuntimeException $r) {
+            BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
+            return ApiHelpers::error($r->getMessage());
         } catch (\Exception $e) {
-            BotLogHelpers::notifyBotLog('(🟠Hub): ' . $e->getMessage());
+            BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
             \Log::error($e->getMessage());
             return ApiHelpers::error('Get service error');
         }
