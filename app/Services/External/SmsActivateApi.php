@@ -56,9 +56,9 @@ class SmsActivateApi
         return $response;
     }
 
-    public function getNumber($service, $country = null, $forward = 0, $operator = null)
+    public function getNumber($service, $country = null, $operator = null)
     {
-        $requestParam = array('api_key' => $this->apiKey, 'action' => __FUNCTION__, 'service' => $service, 'forward' => $forward);
+        $requestParam = array('api_key' => $this->apiKey, 'action' => __FUNCTION__, 'service' => $service);
         if ($country) {
             $requestParam['country'] = $country;
         }
