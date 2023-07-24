@@ -51,7 +51,7 @@ class CountryController extends Controller
             return ApiHelpers::success($countries);
         } catch (\RuntimeException $r) {
             BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
-            return ApiHelpers::error($r->getMessage());
+            return ApiHelpers::error('Ошибка получения данных провайдера');
         } catch (\Exception $e) {
             BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
             \Log::error($e->getMessage());
@@ -78,7 +78,7 @@ class CountryController extends Controller
             return ApiHelpers::success($countries);
         } catch (\RuntimeException $r) {
             BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
-            return ApiHelpers::error($r->getMessage());
+            return ApiHelpers::error('Ошибка получения данных провайдера');
         } catch (\Exception $e) {
             BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
             \Log::error($e->getMessage());
