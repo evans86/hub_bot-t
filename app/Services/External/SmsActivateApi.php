@@ -275,7 +275,7 @@ class SmsActivateApi
             }
             //для получения кодов
             if ($getNumber == 30) {
-                $convert_result = explode(':', $result);
+                $convert_result = explode(':', $result, 2);
 
                 if ($convert_result[0] == 'BAD_ACTION')
                     throw new \Exception('Общее неправильное формирование запроса');
