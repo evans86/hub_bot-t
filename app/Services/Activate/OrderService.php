@@ -176,6 +176,7 @@ class OrderService extends MainService
         if (!is_null($botDto->prices)) {
             if (array_key_exists($service, $prices_array)) {
                 //цена из массива фикисрованных (без учета наценки бота)
+                $amountStart = (int)ceil(floatval($prices_array[$service]) * 100);
                 $amountFinal = (int)ceil(floatval($prices_array[$service]) * 100);;
             } else {
                 //цена из смс хаба (с наценко бота)
