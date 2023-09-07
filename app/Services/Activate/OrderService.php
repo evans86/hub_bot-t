@@ -157,9 +157,9 @@ class OrderService extends MainService
         if (!is_null($botDto->prices)) {
             $prices = explode(',', $botDto->prices);
 
-            foreach ($prices as $price) {
-                $price = explode(':', $price);
-                $prices_array[$price[0]] = $price[1];
+            foreach ($prices as $fix_price) {
+                $fix_price = explode(':', $fix_price);
+                $prices_array[$fix_price[0]] = $fix_price[1];
             }
         }
 
