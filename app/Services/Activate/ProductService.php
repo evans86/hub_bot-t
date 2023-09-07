@@ -72,9 +72,20 @@ class ProductService extends MainService
         $services = current($services);
 
         $result = [];
+        $prices_array = [];
 
         if (!is_null($bot->black))
             $black_array = explode(',', $bot->black);
+
+        //формирование правильного массива фиксированной цены
+        if (!is_null($bot->prices)) {
+            $prices = explode(',', $bot->prices);
+
+            foreach ($prices as $price) {
+                $price = explode(':', $price);
+                $prices_array[$price[0]] = $price[1];
+            }
+        }
 
         foreach ($services as $key => $service) {
 
@@ -84,9 +95,18 @@ class ProductService extends MainService
             }
 
             $count = reset($service);
-            $price = key($service);
 
-            $pricePercent = $price + ($price * ($bot->percent / 100));
+            if (!is_null($bot->prices)) {
+                if (array_key_exists($key, $prices_array)) {
+                    $pricePercent = $prices_array[$key];
+                } else {
+                    $price = key($service);
+                    $pricePercent = $price + ($price * ($bot->percent / 100));
+                }
+            } else {
+                $price = key($service);
+                $pricePercent = $price + ($price * ($bot->percent / 100));
+            }
 
             array_push($result, [
                 'name' => $key,

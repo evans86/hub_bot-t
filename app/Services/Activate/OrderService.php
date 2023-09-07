@@ -150,8 +150,18 @@ class OrderService extends MainService
         if (is_null($user)) {
             throw new RuntimeException('not found user');
         }
-//        if (empty($user->service))
-//            throw new RuntimeException('Choose service pls');
+
+        $prices_array = [];
+
+        //формирование правильного массива фиксированной цены
+        if (!is_null($botDto->prices)) {
+            $prices = explode(',', $botDto->prices);
+
+            foreach ($prices as $price) {
+                $price = explode(':', $price);
+                $prices_array[$price[0]] = $price[1];
+            }
+        }
 
         $serviceResult = $smsActivate->getNumber(
             $service,
@@ -162,11 +172,28 @@ class OrderService extends MainService
 
         $service_price = $smsActivate->getPrices($country_id, $service);
         $service_prices = $service_price[$country_id][$service];
-        $price = key($service_prices);
 
-        // Из него получить цену
-        $amountStart = (int)ceil(floatval($price) * 100);
-        $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
+        if (!is_null($botDto->prices)) {
+            if (array_key_exists($service, $prices_array)) {
+                //цена из массива фикисрованных (без учета наценки бота)
+                $amountFinal = (int)ceil(floatval($prices_array[$service]) * 100);;
+            } else {
+                //цена из смс хаба (с наценко бота)
+                $price = key($service_prices);
+                $amountStart = (int)ceil(floatval($price) * 100);
+                $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
+            }
+        } else {
+            //цена из смс хаба (с наценко бота)
+            $price = key($service_prices);
+            $amountStart = (int)ceil(floatval($price) * 100);
+            $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
+        }
+
+//        $price = key($service_prices);
+//        // Из него получить цену
+//        $amountStart = (int)ceil(floatval($price) * 100);
+//        $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
 
         if ($amountFinal > $userData['money']) {
             $serviceResult = $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);
