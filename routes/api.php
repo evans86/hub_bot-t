@@ -28,15 +28,6 @@ Route::get('countries', [CountryController::class, 'getCountries']);//+
 Route::get('services', [ProductController::class, 'getServices']);//+
 
 /**
- * Роуты API мультисервис
- * не используются в sms hub
- */
-//Route::get('getCountries', [CountryController::class, 'getCountries']);
-//Route::get('getServices', [ProductController::class, 'getServices']);
-//Route::get('createMulti', [OrderController::class, 'createMulti']);
-
-
-/**
  * Роуты API (пользователи)
  */
 Route::get('setService', [ProductController::class, 'setService']);//+
@@ -66,21 +57,6 @@ Route::get('orders', [OrderController::class, 'orders']);//+
 Route::get('closeOrder', [OrderController::class, 'closeOrder']);//+
 Route::get('secondSms', [OrderController::class, 'secondSms']);//+
 Route::get('confirmOrder', [OrderController::class, 'confirmOrder']);//+
-
-///**
-// * Роуты API (аренда номеров))
-// */
-//Route::get('getRentCountries', [RentController::class, 'getRentCountries']);
-//Route::get('getRentServices', [RentController::class, 'getRentServices']);
-//Route::get('createRentOrder', [RentController::class, 'createRentOrder']);
-//Route::get('getRentOrders', [RentController::class, 'getRentOrders']);
-//Route::get('getRentOrder', [RentController::class, 'getRentOrder']);
-//Route::get('closeRentOrder', [RentController::class, 'closeRentOrder']);
-//Route::get('confirmRentOrder', [RentController::class, 'confirmRentOrder']);
-//Route::get('getContinuePrice', [RentController::class, 'getContinuePrice']);
-//Route::get('continueRent', [RentController::class, 'continueRent']);
-//Route::post('rent/updateSmsRent', [RentController::class, 'updateSmsRent'])->name('cashier.webhook');
-
 
 
 

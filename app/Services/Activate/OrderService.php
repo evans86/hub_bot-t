@@ -171,6 +171,8 @@ class OrderService extends MainService
         $org_id = intval($serviceResult[1]);
 
         $service_price = $smsActivate->getPrices($country_id, $service);
+        if (!isset($service_price))
+            throw new RuntimeException('Ошибка получения данных провайдера');
         $service_prices = $service_price[$country_id][$service];
 
         if (!is_null($botDto->prices)) {

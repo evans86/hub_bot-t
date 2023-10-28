@@ -183,7 +183,6 @@ class OrderController extends Controller
                 throw new RuntimeException('Пополните баланс в боте');
             }
             $country = SmsCountry::query()->where(['org_id' => $request->country])->first();
-//            $service = $user->service;
 
             $result = $this->orderService->create(
                 $botDto,
