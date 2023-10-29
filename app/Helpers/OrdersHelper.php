@@ -43,6 +43,7 @@ class OrdersHelper
             'WRONG_SERVICE' => 'Сервис не поддерживает переадресацию',
             'WHATSAPP_NOT_AVAILABLE' => 'Сервис WhatsApp недоступен для выбранной страны',
             'WRONG_SECURITY' => 'Ошибка при попытке передать ID активации без переадресации, или же завершенной/не активной активации',
+            'SERVER_ERROR' => 'Ошибка предоставления данных провайдера',
         ];
 
         if (array_key_exists($result, $errorCodes)) {

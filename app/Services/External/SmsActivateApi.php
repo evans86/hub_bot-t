@@ -250,6 +250,7 @@ class SmsActivateApi
             }
 
             if ($getNumber == 10) {
+
                 $convert_result = explode(':', $result);
 
                 $check = OrdersHelper::requestArray($convert_result[0]);
