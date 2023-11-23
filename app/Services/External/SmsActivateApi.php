@@ -241,6 +241,7 @@ class SmsActivateApi
                     [
 //                        'timeout' => 70, // Response timeout
 //                        'connect_timeout' => 70, // Connection timeout
+                        'http_errors' => false,
                         'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
 
                     ]
