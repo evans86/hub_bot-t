@@ -236,8 +236,8 @@ class SmsActivateApi
             $client = new Client(['base_uri' => $this->url]);
             $response = $client->get('?' . $serializedData,
                 [
-                    'timeout' => 30, // Response timeout
-                    'connect_timeout' => 30, // Connection timeout
+                    'timeout' => 50, // Response timeout
+                    'connect_timeout' => 50, // Connection timeout
                     'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
 
                 ]
