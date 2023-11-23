@@ -236,17 +236,21 @@ class SmsActivateApi
             try {
                 //для домена
                 $client = new Client(['base_uri' => $this->url, 'http_errors' => false]);
-
                 $response = $client->get('?' . $serializedData,
                     [
-                        'timeout' => 70, // Response timeout
-                        'connect_timeout' => 70, // Connection timeout
+//                        'timeout' => 70, // Response timeout
+//                        'connect_timeout' => 70, // Connection timeout
                         'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
 
                     ]
                 );
 
+                if ($response->getStatusCode() == 302) {
+                    throw new RequestError('Ошибка соединения с сервером!');
+                }
+
                 $result = $response->getBody()->getContents();
+
             } catch (BadResponseException $e) {
                 BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
                 \Log::error($e->getMessage());
