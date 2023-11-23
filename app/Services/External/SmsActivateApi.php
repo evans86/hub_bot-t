@@ -258,10 +258,12 @@ class SmsActivateApi
 
             //для домена
 
-
+            try {
                 $result = $this->sendRequest($serializedData, 1);
-
-
+            } catch (\Throwable $e) {
+                BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
+                \Log::error($e->getMessage());
+            }
 
             if ($getNumber == 12) {
                 $parsedResponse = explode(':', $result);
