@@ -224,7 +224,7 @@ class SmsActivateApi
 
         $result = $response->getBody()->getContents();
 
-        if (strpos($result, 'cURL') === 0) {
+        if (substr($result, 0, 4 ) === "cURL") {
             $this->sendRequest($data, $count + 1);
         }
 
