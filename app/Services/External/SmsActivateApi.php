@@ -2,9 +2,11 @@
 
 namespace App\Services\External;
 
+use App\Helpers\BotLogHelpers;
 use App\Helpers\OrdersHelper;
 use App\Models\Order\SmsOrder;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use http\Exception\InvalidArgumentException;
 
 class SmsActivateApi
@@ -234,16 +236,22 @@ class SmsActivateApi
 
             //для домена
             $client = new Client(['base_uri' => $this->url]);
-            $response = $client->get('?' . $serializedData,
-                [
-                    'timeout' => 50, // Response timeout
-                    'connect_timeout' => 50, // Connection timeout
-                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
+            try {
+                $response = $client->get('?' . $serializedData,
+                    [
+//                        'timeout' => 50, // Response timeout
+//                        'connect_timeout' => 50, // Connection timeout
+                        'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
 
-                ]
-            );
+                    ]
+                );
 
-            $result = $response->getBody()->getContents();
+                $result = $response->getBody()->getContents();
+            } catch (BadResponseException $e) {
+                BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
+                \Log::error($e->getMessage());
+                throw new RequestError('Ошибка соединения с сервером!');
+            }
 
 //            $result = file_get_contents("$this->url?$serializedData");
 
