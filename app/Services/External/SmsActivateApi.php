@@ -240,16 +240,25 @@ class SmsActivateApi
             try {
                 $response = $client->get('?' . $serializedData,
                     [
-//                        'timeout' => 80, // Response timeout
-//                        'connect_timeout' => 80, // Connection timeout
                         'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
-
                     ]
                 );
             } catch (\Throwable $e) {
-                BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
-                \Log::error($e->getMessage());
-                throw new RuntimeException('Ошибка соединения с сервером!');
+                try {
+                    if (strpos($e, 'cURL') === 0) {
+                        for ($n = 0; $n <= 5; $n++) {
+                            $response = $client->get('?' . $serializedData,
+                                [
+                                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
+                                ]
+                            );
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
+                    \Log::error($e->getMessage());
+                    throw new RuntimeException('Ошибка соединения с сервером!');
+                }
             }
 
             $result = $response->getBody()->getContents();
