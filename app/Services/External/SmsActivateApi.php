@@ -212,6 +212,9 @@ class SmsActivateApi
 
     public function sendRequest($data, $count)
     {
+        if($count == 5)
+            throw new RuntimeException('Ошибка соединения с сервером!');
+
         $client = new Client(['base_uri' => $this->url]);
         $response = $client->get('?' . $data,
             [
@@ -221,10 +224,8 @@ class SmsActivateApi
 
         $result = $response->getBody()->getContents();
 
-        if ($count > 0){
-            for ($n = 0; $n <= $count; $n++) {
-                $result = $this->sendRequest($data, 0);
-            }
+        if (strpos($result, 'cURL') === 0) {
+            $this->sendRequest($data, $count + 1);
         }
 
         return $result;
@@ -258,19 +259,8 @@ class SmsActivateApi
             //для домена
 
 
+                $result = $this->sendRequest($serializedData, 1);
 
-            try {
-                $result = $this->sendRequest($serializedData, 0);
-
-                if (strpos($result, 'cURL') === 0) {
-                    $result = $this->sendRequest($serializedData, 4);
-                }
-            } catch (\Throwable $e) {
-                BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
-                \Log::error($e->getMessage());
-                throw new RuntimeException('Ошибка соединения с сервером!');
-
-            }
 
 
             if ($getNumber == 12) {
