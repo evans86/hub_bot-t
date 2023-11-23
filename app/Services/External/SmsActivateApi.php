@@ -261,7 +261,7 @@ class SmsActivateApi
                 $result = $this->sendRequest($serializedData, 0);
 
                 if (strpos($result, 'cURL') === 0) {
-                    $result = $this->sendRequest($serializedData, 5);
+                    $result = $this->sendRequest($serializedData, 4);
                 }
             } catch (\Throwable $e) {
                 BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
