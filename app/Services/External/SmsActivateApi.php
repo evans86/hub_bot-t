@@ -234,9 +234,10 @@ class SmsActivateApi
                 $result = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json_string), true);
                 return $result;
             }
+
+            //для домена
+            $client = new Client(['base_uri' => $this->url]);
             try {
-                //для домена
-                $client = new Client(['base_uri' => $this->url]);
                 $response = $client->get('?' . $serializedData,
                     [
 //                        'timeout' => 80, // Response timeout
@@ -245,16 +246,13 @@ class SmsActivateApi
 
                     ]
                 );
-
-                $result = $response->getBody()->getContents();
-
             } catch (RuntimeException $e) {
                 BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
                 \Log::error($e->getMessage());
                 throw new RuntimeException('Ошибка соединения с сервером!');
             }
 
-//            $result = file_get_contents("$this->url?$serializedData");
+            $result = $response->getBody()->getContents();
 
             if ($getNumber == 12) {
                 $parsedResponse = explode(':', $result);
