@@ -212,7 +212,7 @@ class SmsActivateApi
 
     public function sendRequest($data, $count)
     {
-        if($count == 2)
+        if($count == 5)
             throw new RuntimeException('Превышен лимит подключений!');
         try {
             $client = new Client(['base_uri' => $this->url]);
