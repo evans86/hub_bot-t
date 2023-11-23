@@ -210,6 +210,26 @@ class SmsActivateApi
         return $this->requestRent($requestParam, 'POST', true, 3);
     }
 
+    public function sendRequest($data, $count)
+    {
+        $client = new Client(['base_uri' => $this->url]);
+        $response = $client->get('?' . $data,
+            [
+                'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
+            ]
+        );
+
+        $result = $response->getBody()->getContents();
+
+        if ($count > 0){
+            for ($n = 0; $n <= $count; $n++) {
+                $result = $this->sendRequest($data, 0);
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * @param $data
      * @param $method
@@ -236,32 +256,20 @@ class SmsActivateApi
             }
 
             //для домена
-            $client = new Client(['base_uri' => $this->url]);
+
             try {
-                $response = $client->get('?' . $serializedData,
-                    [
-                        'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
-                    ]
-                );
-            } catch (\Throwable $e) {
-                try {
-                    if (strpos($e, 'cURL') === 0) {
-                        for ($n = 0; $n <= 5; $n++) {
-                            $response = $client->get('?' . $serializedData,
-                                [
-                                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
-                                ]
-                            );
-                        }
-                    }
-                } catch (\Throwable $e) {
-                    BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
-                    \Log::error($e->getMessage());
-                    throw new RuntimeException('Ошибка соединения с сервером!');
+                $result = $this->sendRequest($serializedData, 0);
+
+                if (strpos($result, 'cURL') === 0) {
+                    $result = $this->sendRequest($serializedData, 5);
                 }
+            } catch (\Throwable $e) {
+                BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
+                \Log::error($e->getMessage());
+                throw new RuntimeException('Ошибка соединения с сервером!');
+
             }
 
-            $result = $response->getBody()->getContents();
 
             if ($getNumber == 12) {
                 $parsedResponse = explode(':', $result);
