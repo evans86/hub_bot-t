@@ -257,14 +257,14 @@ class SmsActivateApi
             }
 
             //для домена
-            $result = $this->sendRequest($serializedData, 1);
-//            try {
-//
-//            } catch (\Throwable $e) {
-//                BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
-//                \Log::error($e->getMessage());
-//                throw new RuntimeException('Ошибка соединения с сервером!');
-//            }
+
+            try {
+                $result = $this->sendRequest($serializedData, 1);
+            } catch (\Throwable $e) {
+                BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
+                \Log::error($e->getMessage());
+                throw new RuntimeException('Ошибка соединения с сервером!');
+            }
 
             if ($getNumber == 12) {
                 $parsedResponse = explode(':', $result);
