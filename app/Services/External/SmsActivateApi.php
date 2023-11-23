@@ -236,15 +236,18 @@ class SmsActivateApi
             $client = new Client(['base_uri' => $this->url]);
             $response = $client->get('?' . $serializedData,
                 [
-                'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959'
-            ]
+                    'timeout' => 30, // Response timeout
+                    'connect_timeout' => 30, // Connection timeout
+                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
+
+                ]
             );
 
             $result = $response->getBody()->getContents();
 
 //            $result = file_get_contents("$this->url?$serializedData");
 
-            if($getNumber == 12){
+            if ($getNumber == 12) {
                 $parsedResponse = explode(':', $result);
                 return OrdersHelper::requestArray($parsedResponse[0]);
             }
