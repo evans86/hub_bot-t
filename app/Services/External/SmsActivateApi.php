@@ -236,7 +236,7 @@ class SmsActivateApi
             }
             try {
                 //для домена
-                $client = new Client(['base_uri' => $this->url, 'http_errors' => false]);
+                $client = new Client(['base_uri' => $this->url]);
                 $response = $client->get('?' . $serializedData,
                     [
                         'timeout' => 80, // Response timeout
