@@ -257,9 +257,11 @@ class SmsActivateApi
 
             //для домена
 
-            $result = $this->sendRequest($serializedData, 0);
+
 
             try {
+                $result = $this->sendRequest($serializedData, 0);
+
                 if (strpos($result, 'cURL') === 0) {
                     $result = $this->sendRequest($serializedData, 4);
                 }
