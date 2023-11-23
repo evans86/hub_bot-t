@@ -214,22 +214,23 @@ class SmsActivateApi
     {
         if($count == 5)
             throw new RuntimeException('Превышен лимит подключений!');
-
-        $client = new Client(['base_uri' => $this->url]);
-        $response = $client->get('?' . $data,
-            [
-                'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
-            ]
-        );
-
-        $result = $response->getBody()->getContents();
-
-        if (substr($result, 0, 4 ) === "cURL") {
-            $this->sendRequest($data, $count + 1);
+        try {
+            $client = new Client(['base_uri' => $this->url]);
+            $response = $client->get('?' . $data,
+                [
+                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
+                ]
+            );
+        } catch (\Throwable $e) {
+            if (substr($e->getMessage(), 0, 4 ) === "cURL") {
+                $this->sendRequest($data, $count + 1);
+            }
+            throw new RuntimeException($e->getMessage());
         }
 
-        return $result;
+        return $response->getBody()->getContents();
     }
+
 
     /**
      * @param $data
