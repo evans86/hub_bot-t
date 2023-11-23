@@ -222,7 +222,7 @@ class SmsActivateApi
                 ]
             );
         } catch (\Throwable $e) {
-            if (substr($e->getMessage(), 0, 4 ) === "cURL") {
+            if (strpos($e->getMessage(), 'cURL') === 0) {
                 $this->sendRequest($data, $count + 1);
             }
             throw new RuntimeException($e->getMessage());
