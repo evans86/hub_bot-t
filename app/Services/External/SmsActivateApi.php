@@ -213,7 +213,7 @@ class SmsActivateApi
     public function sendRequest($data, $count)
     {
         if($count == 5)
-            throw new RuntimeException('Ошибка соединения с сервером!');
+            throw new RuntimeException('Превышен лимит подключений!');
 
         $client = new Client(['base_uri' => $this->url]);
         $response = $client->get('?' . $data,
@@ -263,6 +263,7 @@ class SmsActivateApi
             } catch (\Throwable $e) {
                 BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
                 \Log::error($e->getMessage());
+                throw new RuntimeException('Ошибка соединения с сервером!');
             }
 
             if ($getNumber == 12) {
