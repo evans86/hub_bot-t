@@ -233,15 +233,14 @@ class SmsActivateApi
                 $result = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json_string), true);
                 return $result;
             }
-
-            //для домена
-            $client = new Client(['base_uri' => $this->url]);
             try {
+                //для домена
+                $client = new Client(['base_uri' => $this->url, 'http_errors' => false]);
+
                 $response = $client->get('?' . $serializedData,
                     [
 //                        'timeout' => 70, // Response timeout
 //                        'connect_timeout' => 70, // Connection timeout
-                        'http_errors' => false,
                         'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958/62959',
 
                     ]
@@ -249,7 +248,7 @@ class SmsActivateApi
 
                 $result = $response->getBody()->getContents();
             } catch (BadResponseException $e) {
-                BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
+                BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
                 \Log::error($e->getMessage());
                 throw new RequestError('Ошибка соединения с сервером!');
             }
