@@ -246,9 +246,9 @@ class SmsActivateApi
                     ]
                 );
 
-//                if ($response->getStatusCode() == 302) {
-//                    throw new RuntimeException('Ошибка соединения с сервером!');
-//                }
+                if ($response->getStatusCode() == 302) {
+                    throw new RuntimeException('Ошибка соединения с сервером!');
+                }
 
                 $result = $response->getBody()->getContents();
 
