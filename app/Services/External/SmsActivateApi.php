@@ -218,7 +218,7 @@ class SmsActivateApi
             $client = new Client(['base_uri' => $this->url]);
             $response = $client->get('?' . $data,
                 [
-                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@86.62.52.85:62958',
+                    'proxy' => 'http://VtZNR9Hb:nXC9nQ45@45.147.246.121:64615',
                 ]
             );
         } catch (\Throwable $e) {
