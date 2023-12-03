@@ -198,7 +198,7 @@ class OrderController extends Controller
         } catch (Exception $e) {
             BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
             \Log::error($e->getMessage());
-            return ApiHelpers::error('Create order error');
+            return ApiHelpers::error('Ошибка получения данных провайдера при создании заказа!');
         }
     }
 
