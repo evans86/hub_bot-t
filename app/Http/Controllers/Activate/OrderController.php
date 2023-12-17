@@ -14,7 +14,8 @@ class OrderController
     {
         $orders = SmsOrder::latest()->take(1000)->Paginate(15);
 
-        $allCount = SmsOrder::count();
+        $allCount = SmsOrder::latest()->first();
+        $allCount = $allCount->id;
         $successCount = count(SmsOrder::query()->where('status', SmsOrder::STATUS_FINISH)->get());
         $cancelCount = count(SmsOrder::query()->where('status', SmsOrder::STATUS_CANCEL)->get());
 
