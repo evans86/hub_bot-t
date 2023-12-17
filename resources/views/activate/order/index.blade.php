@@ -8,26 +8,26 @@
                 <div class="card-header">
                     <h4 class="card-title"> Заказы</h4>
                 </div>
-{{--                <div class="card-body">--}}
-{{--                    <div class="table-responsive">--}}
-{{--                        <table class="table tablesorter " id="">--}}
-{{--                            <thead class=" text-primary">--}}
-{{--                            <tr>--}}
-{{--                                <th class="text-center">Общее число активаций (сегодня)</th>--}}
-{{--                                <th class="text-center">Успешно завершенные (сегодня)</th>--}}
-{{--                                <th class="text-center">Отмененые активации (сегодня)</th>--}}
-{{--                            </tr>--}}
-{{--                            </thead>--}}
-{{--                            <tbody>--}}
-{{--                            <tr>--}}
-{{--                                <th class="text-center">{{ $allCount }} ({{ $todayOrders }})</th>--}}
-{{--                                <th class="text-center">{{ $successCount }} ({{ $todaySuccess }})</th>--}}
-{{--                                <th class="text-center">{{ $cancelCount }} ({{ $todayCancel }})</th>--}}
-{{--                            </tr>--}}
-{{--                            </tbody>--}}
-{{--                        </table>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table tablesorter " id="">
+                            <thead class=" text-primary">
+                            <tr>
+                                <th class="text-center">Общее число активаций (сегодня)</th>
+                                <th class="text-center">Успешно завершенные (сегодня)</th>
+                                <th class="text-center">Отмененые активации (сегодня)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th class="text-center">{{ $allCount }} ({{ $todayOrders }})</th>
+                                <th class="text-center">{{ $successCount }} ({{ $todaySuccess }})</th>
+                                <th class="text-center">{{ $cancelCount }} ({{ $todayCancel }})</th>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table tablesorter " id="">
