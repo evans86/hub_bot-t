@@ -307,6 +307,8 @@ class SmsActivateApi
                     throw new \Exception('Активации не существует.');
                 if ($convert_result[0] == 'STATUS_WAIT_CODE')
                     return null;
+                if ($convert_result[0] == 'BAD_KEY')
+                    throw new \Exception('Неправильный ключ.');
                 if ($convert_result[0] == 'STATUS_CANCEL')
                     return null;
                 if ($convert_result[0] == 'STATUS_WAIT_RETRY')
