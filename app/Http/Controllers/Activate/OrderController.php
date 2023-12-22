@@ -12,17 +12,17 @@ class OrderController
      */
     public function index()
     {
-        $orders = SmsOrder::latest()->take(1000)->Paginate(15);
+        $orders = SmsOrder::orderBy('id', 'DESC')->limit(1000)->Paginate(15);
 
         $allCount = SmsOrder::count();
-        $successCount = count(SmsOrder::query()->where('status', SmsOrder::STATUS_FINISH)->get());
-        $cancelCount = count(SmsOrder::query()->where('status', SmsOrder::STATUS_CANCEL)->get());
+        $successCount = SmsOrder::query()->where('status', SmsOrder::STATUS_FINISH)->count();
+        $cancelCount = SmsOrder::query()->where('status', SmsOrder::STATUS_CANCEL)->count();
 
-        $todayOrders = count(SmsOrder::whereDate('created_at', Carbon::today())->get());
-        $todaySuccess = count(SmsOrder::query()->whereDate('created_at', Carbon::today())->
-            where('status', SmsOrder::STATUS_FINISH)->get());
-        $todayCancel = count(SmsOrder::query()->whereDate('created_at', Carbon::today())->
-            where('status', SmsOrder::STATUS_CANCEL)->get());
+        $todayOrders = SmsOrder::whereDate('created_at', Carbon::today())->count();
+        $todaySuccess = SmsOrder::query()->whereDate('created_at', Carbon::today())->
+        where('status', SmsOrder::STATUS_FINISH)->count();
+        $todayCancel = SmsOrder::query()->whereDate('created_at', Carbon::today())->
+        where('status', SmsOrder::STATUS_CANCEL)->count();
 
         return view('activate.order.index', compact(
             'orders',
