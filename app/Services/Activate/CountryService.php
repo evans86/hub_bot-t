@@ -40,7 +40,7 @@ class CountryService extends MainService
                 'org_id' => $country['id'],
                 'name_ru' => $country['rus'],
                 'name_en' => $country['eng'],
-                'image' => 'https://sms-activate.org/assets/ico/country/' . $country['id'] . '.png'
+                'image' => 'https://smsactivate.s3.eu-central-1.amazonaws.com/assets/ico/country/' . $country['id'] . '.svg'
             ]);
         }
 
