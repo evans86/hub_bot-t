@@ -163,16 +163,26 @@ class OrderService extends MainService
             }
         }
 
+        //максимальная цена
+        $max_price = $smsActivate->getPrices($country_id, $service);
+        $max_price = $max_price[$country_id][$service];
+        end($max_price);
+        $max_price = key($max_price);
+
         $serviceResult = $smsActivate->getNumber(
             $service,
-            $country_id
+            $country_id,
+            $max_price
         );
 
         $org_id = intval($serviceResult[1]);
-
         $service_price = $smsActivate->getPrices($country_id, $service);
-        if (!isset($service_price))
+
+        if (!isset($service_price)) {
+            $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);
             throw new RuntimeException('Ошибка получения данных провайдера');
+        }
+
         $service_prices = $service_price[$country_id][$service];
 
         if (!is_null($botDto->prices)) {
@@ -182,12 +192,14 @@ class OrderService extends MainService
                 $amountFinal = (int)ceil(floatval($prices_array[$service]) * 100);
             } else {
                 //цена из смс хаба (с наценко бота)
+                end($service_prices);//расчет по максимальной цене
                 $price = key($service_prices);
                 $amountStart = (int)ceil(floatval($price) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
             //цена из смс хаба (с наценко бота)
+            end($service_prices);//расчет по максимальной цене
             $price = key($service_prices);
             $amountStart = (int)ceil(floatval($price) * 100);
             $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
@@ -198,13 +210,14 @@ class OrderService extends MainService
 //        $amountStart = (int)ceil(floatval($price) * 100);
 //        $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
 
+
         if ($amountFinal > $userData['money']) {
             $serviceResult = $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);
             throw new RuntimeException('Пополните баланс в боте');
         }
         // Попытаться списать баланс у пользователя
         $result = BottApi::subtractBalance($botDto, $userData, $amountFinal, 'Списание баланса для актвиации номера.');
-//
+
         // Неудача отмена на сервисе
         if (!$result['result']) {
             $serviceResult = $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);

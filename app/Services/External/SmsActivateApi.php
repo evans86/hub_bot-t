@@ -59,11 +59,14 @@ class SmsActivateApi
         return $response;
     }
 
-    public function getNumber($service, $country = null, $operator = null)
+    public function getNumber($service, $country = null, $max_price = null, $operator = null)
     {
         $requestParam = array('api_key' => $this->apiKey, 'action' => __FUNCTION__, 'service' => $service);
         if ($country) {
             $requestParam['country'] = $country;
+        }
+        if ($max_price) {
+            $requestParam['maxPrice'] = $max_price;
         }
         if ($operator && ($country == 0 || $country == 1 || $country == 2)) {
             $requestParam['operator'] = $operator;
@@ -212,7 +215,7 @@ class SmsActivateApi
 
     public function sendRequest($data, $count)
     {
-        if($count == 5)
+        if ($count == 5)
             throw new RuntimeException('Превышен лимит подключений!');
         try {
             $client = new Client(['base_uri' => $this->url]);

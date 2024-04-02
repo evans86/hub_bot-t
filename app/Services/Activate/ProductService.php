@@ -69,7 +69,7 @@ class ProductService extends MainService
         $smsActivate = new SmsActivateApi($bot->api_key, $bot->resource_link);
 
         $services = \Cache::get('services_' . $country);
-        if($services === null){
+        if ($services === null) {
             $services = $smsActivate->getPrices($country);
             \Cache::put('services_' . $country, $services, 15);
         }
@@ -100,8 +100,8 @@ class ProductService extends MainService
             }
 
             //указавтель на последнюю цену в массиве
-//            $count = end($service);
-            $count = reset($service);
+            $count = end($service);
+//            $count = reset($service);
 //            dd($count);
 
             if (!is_null($bot->prices)) {
