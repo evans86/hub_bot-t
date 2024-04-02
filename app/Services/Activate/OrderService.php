@@ -164,15 +164,15 @@ class OrderService extends MainService
         }
 
         //максимальная цена
-        $max_price = $smsActivate->getPrices($country_id, $service);
-        $max_price = $max_price[$country_id][$service];
-        end($max_price);
-        $max_price = key($max_price);
+//        $max_price = $smsActivate->getPrices($country_id, $service);
+//        $max_price = $max_price[$country_id][$service];
+//        end($max_price);
+//        $max_price = key($max_price);
 
         $serviceResult = $smsActivate->getNumber(
             $service,
             $country_id,
-            $max_price
+//            $max_price
         );
 
         $org_id = intval($serviceResult[1]);
@@ -192,14 +192,14 @@ class OrderService extends MainService
                 $amountFinal = (int)ceil(floatval($prices_array[$service]) * 100);
             } else {
                 //цена из смс хаба (с наценко бота)
-                end($service_prices);//расчет по максимальной цене
+//                end($service_prices);//расчет по максимальной цене
                 $price = key($service_prices);
                 $amountStart = (int)ceil(floatval($price) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
             //цена из смс хаба (с наценко бота)
-            end($service_prices);//расчет по максимальной цене
+//            end($service_prices);//расчет по максимальной цене
             $price = key($service_prices);
             $amountStart = (int)ceil(floatval($price) * 100);
             $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;

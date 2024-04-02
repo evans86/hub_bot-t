@@ -100,8 +100,8 @@ class ProductService extends MainService
             }
 
             //указавтель на последнюю цену в массиве
-            $count = end($service);
-//            $count = reset($service);
+//            $count = end($service);
+            $count = reset($service);
 //            dd($count);
 
             if (!is_null($bot->prices)) {
