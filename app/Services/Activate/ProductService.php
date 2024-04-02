@@ -74,6 +74,7 @@ class ProductService extends MainService
             \Cache::put('services_' . $country, $services, 15);
         }
         $services = current($services);
+//        dd($services['vk']);
 
         $result = [];
         $prices_array = [];
@@ -92,23 +93,28 @@ class ProductService extends MainService
         }
 
         foreach ($services as $key => $service) {
-
+//            dd($service);
             if (!is_null($bot->black)) {
                 if (in_array($key, $black_array))
                     continue;
             }
 
-            $count = reset($service);
+            //указавтель на последнюю цену в массиве
+            $count = end($service);
+//            $count = reset($service);
+//            dd($count);
 
             if (!is_null($bot->prices)) {
                 if (array_key_exists($key, $prices_array)) {
                     $pricePercent = $prices_array[$key];
                 } else {
                     $price = key($service);
+
                     $pricePercent = $price + ($price * ($bot->percent / 100));
                 }
             } else {
                 $price = key($service);
+//                dd($price);
                 $pricePercent = $price + ($price * ($bot->percent / 100));
             }
 
