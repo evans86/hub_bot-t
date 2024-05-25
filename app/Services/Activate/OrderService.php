@@ -298,7 +298,7 @@ class OrderService extends MainService
             $amountFinal = $order->price_final;
             $result = BottApi::addBalance($botDto, $userData, $amountFinal, 'Возврат баланса, активация отменена');
         } else {
-            throw new RuntimeException('The order has not been canceled, the number has been activated');
+            throw new RuntimeException('Not save order service');
         }
         return $result;
     }
