@@ -44,6 +44,77 @@ class RentService extends MainService
         return $result;
     }
 
+    // Асинхронный запрос для тестов
+    public function cronGuzzle()
+    {
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'http://hub',
+        ]);
+
+        $urls = [
+            '/closeOrder?user_id=1&order_id=504171378&public_key=062d7c679ca22cf88b01b13c0b24b057',
+            '/closeOrder?user_id=1&order_id=504171378&public_key=062d7c679ca22cf88b01b13c0b24b057',
+            '/closeOrder?user_id=1&order_id=504171378&public_key=062d7c679ca22cf88b01b13c0b24b057',
+            '/closeOrder?user_id=1&order_id=504171378&public_key=062d7c679ca22cf88b01b13c0b24b057',
+            '/closeOrder?user_id=1&order_id=504171378&public_key=062d7c679ca22cf88b01b13c0b24b057',
+            '/closeOrder?user_id=1&order_id=504171378&public_key=062d7c679ca22cf88b01b13c0b24b057',
+            '/closeOrder?user_id=1&order_id=504171378&public_key=062d7c679ca22cf88b01b13c0b24b057',
+            '/closeOrder?user_id=1&order_id=504171378&public_key=062d7c679ca22cf88b01b13c0b24b057',
+        ];
+
+        $promises = [];
+
+        foreach ($urls as $urlIndex => $url) {
+            $request = new \GuzzleHttp\Psr7\Request('GET', $url, []);
+
+            echo date('d.m.Y H:i:s') . ' запрос ' . $url . PHP_EOL;
+
+            $promises[$urlIndex] = $client->sendAsync($request, [
+                'timeout' => 10,
+                'on_stats' => function (\GuzzleHttp\TransferStats $stats) use ($url) {
+                    // Тут можно получить статистику запроса
+                    $stat = $stats->getHandlerStats();
+                    echo date('d.m.Y H:i:s') . ' получена статистика ' . $url . PHP_EOL;
+                }
+            ]);
+
+            $promises[$urlIndex]->then(
+                function (\Psr\Http\Message\ResponseInterface $res) use ($url) {
+                    // Тут обработка ответа
+                    echo date('d.m.Y H:i:s') . ' запрос выполнен ' . $url . PHP_EOL;
+                },
+                function (\GuzzleHttp\Exception\RequestException $e) {
+                    // Тут обработка ошибки
+                }
+            );
+        }
+
+        // Ждать ответов
+        $results = \GuzzleHttp\Promise\Utils::settle($promises)->wait(true);
+
+        // Обработка результатов по всем запросам
+        if (sizeof($results) > 0) {
+            foreach ($results as $urlIndex => $result) {
+                // Обработка ответа по запросу $urls[$urlIndex]
+
+                if ($result['state'] != 'fulfilled' || !isset($result['value'])) {
+                    // Если запрос выполнился с ошибкой
+                    continue;
+                }
+
+                /** @var \GuzzleHttp\Psr7\Response $response */
+                $response = $result['value'];
+
+                // Получение заголовков
+                // $response->getHeaderLine('Content-Length');
+
+                // Обработка тела ответа
+                $body = $response->getBody();
+                echo date('d.m.Y H:i:s') . ' обработка запроса в цикле' . $urls[$urlIndex] . PHP_EOL;
+            }
+        }
+    }
+
     /**
      * формируем список сервисов
      *
@@ -322,7 +393,7 @@ class RentService extends MainService
 
         $new_codes = intval(preg_replace('/[^0-9]+/', '', $codes), 10);
 
-        $new_codes = (string) $new_codes;
+        $new_codes = (string)$new_codes;
 
         $rentOrder->codes = $new_codes;
 

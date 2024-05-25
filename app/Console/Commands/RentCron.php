@@ -40,7 +40,8 @@ class RentCron extends Command
     public function handle()
     {
         $rentService = new RentService();
-        $rentService->cronUpdateRentStatus();
+        $rentService->cronGuzzle();
+//        $rentService->cronUpdateRentStatus();
         return 0;
     }
 }

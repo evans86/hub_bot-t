@@ -368,9 +368,6 @@ class OrderService extends MainService
 
         $result = $this->getStatus($order->org_id, $botDto);
 
-//        if ($result != SmsOrder::STATUS_WAIT_RETRY)
-//            throw new RuntimeException('При проверке статуса произошла ошибка, вернулся статус: ' . $result);
-
         $resultSet = $order->status = SmsOrder::STATUS_WAIT_RETRY;
 
         $order->save();
