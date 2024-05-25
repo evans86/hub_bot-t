@@ -14,6 +14,7 @@ use App\Services\MainService;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use RuntimeException;
+use Throwable;
 
 class OrderService extends MainService
 {
@@ -303,7 +304,7 @@ class OrderService extends MainService
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function updateStatusCancel($order_id): void
     {
@@ -462,6 +463,7 @@ class OrderService extends MainService
 
                 if (is_null($order->codes)) {
                     echo 'cancel_start' . PHP_EOL;
+                    $this->updateStatusCancel($order->org_id);
                     $this->cancel(
                         $botDto,
                         $order,
@@ -484,6 +486,8 @@ class OrderService extends MainService
 
         } catch (\Exception $e) {
             $this->notifyTelegram('🔴' . $e->getMessage());
+        } catch (Throwable $t) {
+            $this->notifyTelegram('🔴' . $t->getMessage());
         }
     }
 
