@@ -152,6 +152,7 @@ class OrderService extends MainService
             throw new RuntimeException('not found user');
         }
 
+        $apiRate = ProductService::formingRublePrice();
         $prices_array = [];
 
         //формирование правильного массива фиксированной цены
@@ -194,14 +195,16 @@ class OrderService extends MainService
             } else {
                 //цена из смс хаба (с наценко бота)
 //                end($service_prices);//расчет по максимальной цене
-                $price = key($service_prices);
+//                $price = ProductService::formingRublePrice(key($service_prices));
+
+                $price = $apiRate * $service_prices;
                 $amountStart = (int)ceil(floatval($price) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
             //цена из смс хаба (с наценко бота)
 //            end($service_prices);//расчет по максимальной цене
-            $price = key($service_prices);
+            $price = $apiRate * $service_prices;
             $amountStart = (int)ceil(floatval($price) * 100);
             $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
         }

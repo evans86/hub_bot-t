@@ -85,7 +85,7 @@ class ProductController extends Controller
      */
     public function getServices(Request $request)
     {
-        try {
+//        try {
             if (is_null($request->country))
                 return ApiHelpers::error('Not found params: country');
             if (is_null($request->public_key))
@@ -96,13 +96,13 @@ class ProductController extends Controller
 
             $countries = $this->productService->getServices($bot, $request->country);
             return ApiHelpers::success($countries);
-        } catch (\RuntimeException $r) {
-            BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
-            return ApiHelpers::error('Ошибка получения данных провайдера');
-        } catch (\Exception $e) {
-            BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
-            \Log::error($e->getMessage());
-            return ApiHelpers::error('Get service error');
-        }
+//        } catch (\RuntimeException $r) {
+//            BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
+//            return ApiHelpers::error('Ошибка получения данных провайдера');
+//        } catch (\Exception $e) {
+//            BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
+//            \Log::error($e->getMessage());
+//            return ApiHelpers::error('Get service error');
+//        }
     }
 }

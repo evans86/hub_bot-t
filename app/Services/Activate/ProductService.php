@@ -67,6 +67,7 @@ class ProductService extends MainService
     public function getServices($bot, $country = null)
     {
         $smsActivate = new SmsActivateApi($bot->api_key, $bot->resource_link);
+        $apiRate = ProductService::formingRublePrice();
 
         $services = \Cache::get('services_' . $country);
         if ($services === null) {
@@ -109,13 +110,17 @@ class ProductService extends MainService
                     $pricePercent = $prices_array[$key];
                 } else {
                     $price = key($service);
+                    $price = $apiRate * $price;
 
                     $pricePercent = $price + ($price * ($bot->percent / 100));
                 }
             } else {
                 $price = key($service);
+                $price = $apiRate * $price;
 //                dd($price);
+//                $price = (int)ceil(floatval($price) * 100);
                 $pricePercent = $price + ($price * ($bot->percent / 100));
+//                dd($pricePercent);
             }
 
             array_push($result, [
@@ -128,5 +133,20 @@ class ProductService extends MainService
         }
 
         return $result;
+    }
+
+    public static function formingRublePrice(): float
+    {
+        $url = 'https://www.cbr.ru/scripts/XML_daily.asp';
+        $xml = simplexml_load_file($url);
+        $json = json_encode($xml);
+        $currencies = json_decode($json, TRUE);
+        $apiRate = '';
+        foreach ($currencies['Valute'] as $key => $currency) {
+            if ($currency['CharCode'] == 'USD')
+                $apiRate = $currency['Value'];
+        }
+        $apiRate = str_replace(",", ".", $apiRate);
+        return floatval($apiRate);
     }
 }
