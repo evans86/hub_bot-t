@@ -197,14 +197,16 @@ class OrderService extends MainService
 //                end($service_prices);//расчет по максимальной цене
 //                $price = ProductService::formingRublePrice(key($service_prices));
 
-                $price = $apiRate * $service_prices;
+                $price = round(($apiRate * $service_prices), 2);
+//                $price = $apiRate * $service_prices;
                 $amountStart = (int)ceil(floatval($price) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
             //цена из смс хаба (с наценко бота)
 //            end($service_prices);//расчет по максимальной цене
-            $price = $apiRate * $service_prices;
+            $price = round(($apiRate * $service_prices), 2);
+//            $price = $apiRate * $service_prices;
             $amountStart = (int)ceil(floatval($price) * 100);
             $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
         }
@@ -213,7 +215,6 @@ class OrderService extends MainService
 //        // Из него получить цену
 //        $amountStart = (int)ceil(floatval($price) * 100);
 //        $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
-
 
         if ($amountFinal > $userData['money']) {
             $serviceResult = $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);

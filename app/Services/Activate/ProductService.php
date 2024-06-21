@@ -68,6 +68,7 @@ class ProductService extends MainService
     {
         $smsActivate = new SmsActivateApi($bot->api_key, $bot->resource_link);
         $apiRate = ProductService::formingRublePrice();
+//        dd($apiRate);
 
         $services = \Cache::get('services_' . $country);
         if ($services === null) {
@@ -94,33 +95,28 @@ class ProductService extends MainService
         }
 
         foreach ($services as $key => $service) {
-//            dd($service);
             if (!is_null($bot->black)) {
                 if (in_array($key, $black_array))
                     continue;
             }
 
             //указавтель на последнюю цену в массиве
-//            $count = end($service);
             $count = reset($service);
-//            dd($count);
 
             if (!is_null($bot->prices)) {
                 if (array_key_exists($key, $prices_array)) {
                     $pricePercent = $prices_array[$key];
                 } else {
                     $price = key($service);
-                    $price = $apiRate * $price;
+                    $price = round(($apiRate * $price), 2);
 
                     $pricePercent = $price + ($price * ($bot->percent / 100));
                 }
             } else {
                 $price = key($service);
-                $price = $apiRate * $price;
-//                dd($price);
-//                $price = (int)ceil(floatval($price) * 100);
+                $price = round(($apiRate * $price), 2);
+
                 $pricePercent = $price + ($price * ($bot->percent / 100));
-//                dd($pricePercent);
             }
 
             array_push($result, [
