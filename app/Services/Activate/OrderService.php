@@ -194,7 +194,7 @@ class OrderService extends MainService
                 $price = key($service_prices);
                 $price = round(($apiRate * $price), 2);
 
-                $amountStart = (int)ceil(floatval($service_prices) * 100);
+                $amountStart = (int)ceil(floatval($price) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
