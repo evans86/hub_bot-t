@@ -61,7 +61,7 @@ class SmsActivateApi
 
     public function getNumber($service, $country = null, $max_price = null, $operator = null)
     {
-        $requestParam = array('api_key' => $this->apiKey, 'action' => __FUNCTION__, 'service' => $service);
+        $requestParam = array('api_key' => $this->apiKey, 'action' => __FUNCTION__, 'service' => $service, 'currency' => 840);
         if ($country) {
             $requestParam['country'] = $country;
         }
