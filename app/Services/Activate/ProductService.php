@@ -106,12 +106,14 @@ class ProductService extends MainService
                 if (array_key_exists($key, $prices_array)) {
                     $pricePercent = $prices_array[$key];
                 } else {
+                    end($service);
                     $price = key($service);
                     $price = round(($apiRate * $price), 2);
 
                     $pricePercent = $price + ($price * ($bot->percent / 100));
                 }
             } else {
+                end($service);
                 $price = key($service);
                 $price = round(($apiRate * $price), 2);
 //                dd($price);
