@@ -187,12 +187,12 @@ class OrderService extends MainService
                 $amountFinal = (int)ceil(floatval($prices_array[$service]) * 100);
             } else {
                 //цена из смс хаба (с наценко бота)
-//                end($service_prices);//расчет по максимальной цене
+                end($service_prices);//расчет по максимальной цене
 //                $price = ProductService::formingRublePrice(key($service_prices));
 
 //                $price = $apiRate * $service_prices;
 //                $price = $apiRate * $service_prices;
-                $amountStart = (int)ceil(floatval($service_prices) * $apiRate * 100);
+                $amountStart = (int)ceil(floatval($service_prices) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
@@ -201,7 +201,7 @@ class OrderService extends MainService
 //            $price = round(($apiRate * $service_prices), 2);
 //            $price = $apiRate * $service_prices;
 //            dd(floatval($service_prices) * $apiRate * 100);
-            $amountStart = (int)ceil(floatval($service_prices) * $apiRate * 100);
+            $amountStart = (int)ceil(floatval($service_prices) * 100);
             $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
 //            dd($amountFinal);
         }
