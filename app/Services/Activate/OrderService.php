@@ -190,17 +190,17 @@ class OrderService extends MainService
 //                end($service_prices);//расчет по максимальной цене
 //                $price = ProductService::formingRublePrice(key($service_prices));
 
-                $price = $apiRate * $service_prices;
 //                $price = $apiRate * $service_prices;
-                $amountStart = (int)ceil(floatval($price) * 100);
+//                $price = $apiRate * $service_prices;
+                $amountStart = (int)ceil(floatval($service_prices * $apiRate) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
             //цена из смс хаба (с наценко бота)
 //            end($service_prices);//расчет по максимальной цене
-            $price = round(($apiRate * $service_prices), 2);
+//            $price = round(($apiRate * $service_prices), 2);
 //            $price = $apiRate * $service_prices;
-            $amountStart = (int)ceil(floatval($price) * 100);
+            $amountStart = (int)ceil(floatval($service_prices * $apiRate) * 100);
             $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
         }
 
