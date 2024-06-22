@@ -169,9 +169,11 @@ class OrderService extends MainService
             $service,
             $country_id
         );
+//        dd($serviceResult);
 
         $org_id = intval($serviceResult[1]);
         $service_price = $smsActivate->getPrices($country_id, $service);
+//        dd($service_price);
 
         if (!isset($service_price)) {
             $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);
@@ -179,6 +181,7 @@ class OrderService extends MainService
         }
 
         $service_prices = $service_price[$country_id][$service];
+//        dd($service_prices);
 
         if (!is_null($botDto->prices)) {
             if (array_key_exists($service, $prices_array)) {
@@ -188,22 +191,19 @@ class OrderService extends MainService
             } else {
                 //цена из смс хаба (с наценко бота)
                 end($service_prices);//расчет по максимальной цене
-//                $price = ProductService::formingRublePrice(key($service_prices));
+                $price = key($service_prices);
+                $price = round(($apiRate * $price), 2);
 
-//                $price = $apiRate * $service_prices;
-//                $price = $apiRate * $service_prices;
                 $amountStart = (int)ceil(floatval($service_prices) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
-            //цена из смс хаба (с наценко бота)
-//            end($service_prices);//расчет по максимальной цене
-//            $price = round(($apiRate * $service_prices), 2);
-//            $price = $apiRate * $service_prices;
-//            dd(floatval($service_prices) * $apiRate * 100);
-            $amountStart = (int)ceil(floatval($service_prices) * 100);
+            end($service_prices);//расчет по максимальной цене
+            $price = key($service_prices);
+            $price = round(($apiRate * $price), 2);
+
+            $amountStart = (int)ceil(floatval($price) * 100);
             $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
-//            dd($amountFinal);
         }
 
 //        $price = key($service_prices);

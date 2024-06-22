@@ -76,7 +76,6 @@ class ProductService extends MainService
             \Cache::put('services_' . $country, $services, 15);
         }
         $services = current($services);
-//        dd($services['vk']);
 
         $result = [];
         $prices_array = [];
@@ -115,7 +114,7 @@ class ProductService extends MainService
             } else {
                 $price = key($service);
                 $price = round(($apiRate * $price), 2);
-
+//                dd($price);
                 $pricePercent = $price + ($price * ($bot->percent / 100));
             }
 
