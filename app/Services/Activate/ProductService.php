@@ -143,6 +143,6 @@ class ProductService extends MainService
                 $apiRate = $currency['Value'];
         }
         $apiRate = str_replace(",", ".", $apiRate);
-        return floatval($apiRate);
+        return $apiRate;
     }
 }

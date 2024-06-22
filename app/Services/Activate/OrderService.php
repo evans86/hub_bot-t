@@ -192,7 +192,7 @@ class OrderService extends MainService
 
 //                $price = $apiRate * $service_prices;
 //                $price = $apiRate * $service_prices;
-                $amountStart = (int)ceil(floatval($service_prices * $apiRate) * 100);
+                $amountStart = (int)ceil(floatval($service_prices) * $apiRate * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
@@ -200,8 +200,10 @@ class OrderService extends MainService
 //            end($service_prices);//расчет по максимальной цене
 //            $price = round(($apiRate * $service_prices), 2);
 //            $price = $apiRate * $service_prices;
-            $amountStart = (int)ceil(floatval($service_prices * $apiRate) * 100);
+//            dd(floatval($service_prices) * $apiRate * 100);
+            $amountStart = (int)ceil(floatval($service_prices) * $apiRate * 100);
             $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
+//            dd($amountFinal);
         }
 
 //        $price = key($service_prices);
@@ -216,7 +218,7 @@ class OrderService extends MainService
         // Попытаться списать баланс у пользователя
         $result = BottApi::subtractBalance($botDto, $userData, $amountFinal, 'Списание баланса для актвиации номера.');
 
-        // Неудача отмена на сервисе
+         // Неудача отмена на сервисе
         if (!$result['result']) {
             $serviceResult = $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);
             throw new RuntimeException('При списании баланса произошла ошибка: ' . $result['message']);
