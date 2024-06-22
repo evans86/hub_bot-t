@@ -165,16 +165,9 @@ class OrderService extends MainService
             }
         }
 
-        //максимальная цена
-//        $max_price = $smsActivate->getPrices($country_id, $service);
-//        $max_price = $max_price[$country_id][$service];
-//        end($max_price);
-//        $max_price = key($max_price);
-
         $serviceResult = $smsActivate->getNumber(
             $service,
-            $country_id,
-//            $max_price
+            $country_id
         );
 
         $org_id = intval($serviceResult[1]);
@@ -197,7 +190,7 @@ class OrderService extends MainService
 //                end($service_prices);//расчет по максимальной цене
 //                $price = ProductService::formingRublePrice(key($service_prices));
 
-                $price = round(($apiRate * $service_prices), 2);
+                $price = $apiRate * $service_prices;
 //                $price = $apiRate * $service_prices;
                 $amountStart = (int)ceil(floatval($price) * 100);
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
