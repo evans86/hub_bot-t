@@ -198,7 +198,7 @@ class OrderService extends MainService
                 $amountFinal = $amountStart + $amountStart * $botDto->percent / 100;
             }
         } else {
-            array_shift($service_prices);//расчет по максимальной цене
+            array_shift ($service_prices);//расчет по максимальной цене
             $price = key($service_prices);
             $price = round(($apiRate * $price), 2);
 
