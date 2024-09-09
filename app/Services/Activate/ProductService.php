@@ -134,7 +134,7 @@ class ProductService extends MainService
             ]);
 
         }
-
+//        dd($result);
         return $result;
     }
 
