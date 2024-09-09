@@ -75,8 +75,9 @@ class ProductService extends MainService
             $services = $smsActivate->getPrices($country);
             \Cache::put('services_' . $country, $services, 15);
         }
-        $services = current($services);
 
+        $services = current($services);
+//        dd($services);
         $result = [];
         $prices_array = [];
 
@@ -98,10 +99,11 @@ class ProductService extends MainService
                 if (in_array($key, $black_array))
                     continue;
             }
-
+//        dd($services);
             //указавтель на последнюю цену в массиве
             $count = reset($service);
-
+//            dd($service);
+//            dd($key);
             if (!is_null($bot->prices)) {
                 if (array_key_exists($key, $prices_array)) {
                     $pricePercent = $prices_array[$key];
@@ -113,8 +115,12 @@ class ProductService extends MainService
                     $pricePercent = $price + ($price * ($bot->percent / 100));
                 }
             } else {
-                array_shift($service);
+//                dd($service);
+                if (count($service) > 1)
+                    array_shift($service);
+//                dd($service);
                 $price = key($service);
+//                dd($price);
                 $price = round(($apiRate * $price), 2);
 //                dd($price);
                 $pricePercent = $price + ($price * ($bot->percent / 100));
