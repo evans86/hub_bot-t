@@ -70,11 +70,11 @@ class ProductService extends MainService
         $apiRate = ProductService::formingRublePrice();
 //        dd($apiRate);
 
-//        $services = \Cache::get('services_' . $country);
-//        if ($services === null) {
+        $services = \Cache::get('services_' . $country);
+        if ($services === null) {
             $services = $smsActivate->getPrices($country);
-//            \Cache::put('services_' . $country, $services, 15);
-//        }
+            \Cache::put('services_' . $country, $services, 15);
+        }
 
         $services = current($services);
 //        dd($services);
@@ -124,6 +124,7 @@ class ProductService extends MainService
                 $price = round(($apiRate * $price), 2);
 //                dd($price);
                 $pricePercent = $price + ($price * ($bot->percent / 100));
+//                dd($pricePercent);
             }
 
             array_push($result, [
