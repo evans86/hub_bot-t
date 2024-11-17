@@ -26,11 +26,11 @@ class CountryService extends MainService
     {
         $smsActivate = new SmsActivateApi(config('services.key_activate.key'), BotService::DEFAULT_ACTIVATE_HOST);
 
-        $countries = \Cache::get('countries');
-        if($countries === null){
+//        $countries = \Cache::get('countries');
+//        if($countries === null){
             $countries = $smsActivate->getCountries();
-            \Cache::put('countries', $countries, 900);
-        }
+//            \Cache::put('countries', $countries, 900);
+//        }
 
         $result = [];
 
