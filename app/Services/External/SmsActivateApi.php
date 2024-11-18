@@ -254,7 +254,16 @@ class SmsActivateApi
         if ($method === 'GET') {
 
             if ($getNumber == 11) {
-                $result = file_get_contents("$this->url?$serializedData");
+//                $result = file_get_contents("$this->url?$serializedData");
+
+                try {
+                    $result = $this->sendRequest($serializedData, 1);
+                } catch (\Throwable $e) {
+                    BotLogHelpers::notifyBotLog('(🟠E ' . __FUNCTION__ . ' Hub): ' . $e->getMessage());
+                    \Log::error($e->getMessage());
+                    throw new RuntimeException('Ошибка соединения с сервером!');
+                }
+
                 $json_string = stripslashes(html_entity_decode($result));
                 $result = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json_string), true);
                 return $result;
