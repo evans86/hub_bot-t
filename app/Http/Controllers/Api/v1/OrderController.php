@@ -401,28 +401,34 @@ class OrderController extends Controller
             if (empty($bot))
                 return ApiHelpers::error('Not found module.');
 
-            $botDto = BotFactory::fromEntity($bot);
-            $result = BottApi::checkUser(
-                $request->user_id,
-                $request->user_secret_key,
-                $botDto->public_key,
-                $botDto->private_key
-            );
-            if (!$result['result']) {
-                throw new RuntimeException($result['message']);
-            }
+            return \DB::transaction(function () use ($request, $bot) {
+                $botDto = BotFactory::fromEntity($bot);
+                $result = BottApi::checkUser(
+                    $request->user_id,
+                    $request->user_secret_key,
+                    $botDto->public_key,
+                    $botDto->private_key
+                );
+                if (!$result['result']) {
+                    throw new RuntimeException($result['message']);
+                }
 
-            $this->orderService->updateStatusCancel($request->order_id);
-            $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
+                $this->orderService->updateStatusCancel($request->order_id);
+                $order = SmsOrder::query()->where(['org_id' => $request->order_id])->lockForUpdate()->first();
 
-            $result = $this->orderService->cancel(
-                $botDto,
-                $order,
-                $result['data']
-            );
+                if (!$order) {
+                    throw new RuntimeException('Order not found');
+                }
 
-            $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
-            return ApiHelpers::success(OrderResource::generateOrderArray($order));
+                $result = $this->orderService->cancel(
+                    $botDto,
+                    $order,
+                    $result['data']
+                );
+
+                $order = SmsOrder::query()->where(['org_id' => $request->order_id])->first();
+                return ApiHelpers::success(OrderResource::generateOrderArray($order));
+            });
         } catch (\RuntimeException $r) {
             BotLogHelpers::notifyBotLog('(🟠R ' . __FUNCTION__ . ' Hub): ' . $r->getMessage());
             return ApiHelpers::error($r->getMessage());
