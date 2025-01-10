@@ -14,7 +14,7 @@ class BotController
         $bots = SmsBot::orderBy('id', 'DESC')->Paginate(10);
 
         //даты последней выплаты минус бот созданный для примера
-        $newBots = count(SmsBot::query()->where('created_at', '>', '2024-12-10 20:10:35')->get());
+        $newBots = count(SmsBot::query()->where('created_at', '>', '2025-01-10 20:21:56')->get());
         $allCount = count(SmsBot::get());
 
         return view('activate.bot.index', compact(
