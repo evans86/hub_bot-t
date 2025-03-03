@@ -298,7 +298,7 @@ class OrderService extends MainService
         // Возврат баланаса если номер не использовали
         if (is_null($order->codes)) {
             $amountFinal = $order->price_final;
-            $result = BottApi::addBalance($botDto, $userData, $amountFinal, 'Возврат баланса, активация отменена');
+            $result = BottApi::addBalance($botDto, $userData, $amountFinal, 'Возврат баланса, активация отменена order_id: ' . $order->id);
         } else {
             throw new RuntimeException('Not save order service');
         }
