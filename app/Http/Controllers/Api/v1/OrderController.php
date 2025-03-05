@@ -14,6 +14,7 @@ use App\Models\User\SmsUser;
 use App\Services\Activate\OrderService;
 use App\Services\External\BottApi;
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use RuntimeException;
 
@@ -41,6 +42,7 @@ class OrderController extends Controller
      *
      * @param Request $request
      * @return array|string
+     * @throws GuzzleException
      */
     public function orders(Request $request)
     {

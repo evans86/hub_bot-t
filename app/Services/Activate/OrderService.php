@@ -4,6 +4,7 @@ namespace App\Services\Activate;
 
 use App\Dto\BotDto;
 use App\Dto\BotFactory;
+use App\Helpers\BotLogHelpers;
 use App\Models\Activate\SmsCountry;
 use App\Models\Bot\SmsBot;
 use App\Models\Order\SmsOrder;
@@ -12,7 +13,9 @@ use App\Services\External\BottApi;
 use App\Services\External\SmsActivateApi;
 use App\Services\MainService;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use Log;
 use RuntimeException;
 use Throwable;
 
@@ -135,11 +138,12 @@ class OrderService extends MainService
     /**
      * Создание заказа
      *
-     * @param array $userData Сущность DTO from bott
      * @param BotDto $botDto
      * @param string $country_id
+     * @param string $service
+     * @param array $userData Сущность DTO from bott
      * @return array
-     * @throws \Exception
+     * @throws GuzzleException
      */
     public
     function create(BotDto $botDto, string $country_id, string $service, array $userData): array
@@ -169,11 +173,9 @@ class OrderService extends MainService
             $service,
             $country_id
         );
-//        dd($serviceResult);
 
         $org_id = intval($serviceResult[1]);
         $service_price = $smsActivate->getPrices($country_id, $service);
-//        dd($service_price);
 
         if (!isset($service_price)) {
             $smsActivate->setStatus($org_id, SmsOrder::ACCESS_CANCEL);
@@ -181,7 +183,6 @@ class OrderService extends MainService
         }
 
         $service_prices = $service_price[$country_id][$service];
-//        dd($service_prices);
 
         if (!is_null($botDto->prices)) {
             if (array_key_exists($service, $prices_array)) {
@@ -219,7 +220,7 @@ class OrderService extends MainService
             throw new RuntimeException('Пополните баланс в боте');
         }
         // Попытаться списать баланс у пользователя
-        $result = BottApi::subtractBalance($botDto, $userData, $amountFinal, 'Списание баланса для актвиации номера.');
+        $result = BottApi::subtractBalance($botDto, $userData, $amountFinal, 'Списание баланса для актвиации номера ' . $serviceResult[2]);
 
         // Неудача отмена на сервисе
         if (!$result['result']) {
@@ -248,8 +249,7 @@ class OrderService extends MainService
         ];
 
         $order = SmsOrder::create($data);
-//        $result = $smsActivate->setStatus($order, SmsOrder::ACCESS_RETRY_GET);
-//        $result = $this->getStatus($order->org_id, $botDto);
+        Log::info('Hub: Произошло создание заказа (списание баланса) ' . $order->id);
 
         $result = [
             'id' => $order->org_id,
@@ -272,6 +272,7 @@ class OrderService extends MainService
      * @param BotDto $botDto
      * @param SmsOrder $order
      * @return mixed
+     * @throws GuzzleException
      */
     public
     function cancel(BotDto $botDto, SmsOrder $order, array $userData)
@@ -298,7 +299,9 @@ class OrderService extends MainService
         // Возврат баланаса если номер не использовали
         if (is_null($order->codes)) {
             $amountFinal = $order->price_final;
+            BotLogHelpers::notifyBotLog('(🟠SUB ' . __FUNCTION__ . ' Hub): ' . 'Вернул баланс order_id = ' . $order->id);
             $result = BottApi::addBalance($botDto, $userData, $amountFinal, 'Возврат баланса, активация отменена order_id: ' . $order->id);
+            Log::info('Hub: Произошла отмена заказа (возврат баланса) ' . $order->id);
         } else {
             throw new RuntimeException('Not save order service');
         }
@@ -343,6 +346,7 @@ class OrderService extends MainService
         $order->status = SmsOrder::STATUS_FINISH;
 
         $order->save();
+        Log::info('Hub: Произошло успешное завершение заказа ' . $order->id);
 
         return SmsOrder::STATUS_FINISH;
     }
@@ -379,9 +383,9 @@ class OrderService extends MainService
     /**
      * Получение активного заказа и обновление кодов
      *
-     * @param array $userData
      * @param BotDto $botDto
      * @param SmsOrder $order
+     * @param array|null $userData
      * @return void
      */
     public
@@ -439,8 +443,12 @@ class OrderService extends MainService
         try {
             $statuses = [SmsOrder::STATUS_OK, SmsOrder::STATUS_WAIT_CODE, SmsOrder::STATUS_WAIT_RETRY];
 
-            $orders = SmsOrder::query()->whereIn('status', $statuses)
-                ->where('end_time', '<=', time())->get();
+            $orders = SmsOrder::query()
+                ->whereIn('status', $statuses)
+                ->where('end_time', '<=', time())
+                ->where('status', '!=', SmsOrder::STATUS_CANCEL) // Исключаем уже отмененные заказы
+                ->lockForUpdate()
+                ->get();
 
             echo "START count:" . count($orders) . PHP_EOL;
 
