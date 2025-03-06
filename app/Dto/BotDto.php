@@ -13,6 +13,7 @@ class BotDto
     public int    $percent;
     public int    $version;
     public int    $color;
+    public bool $is_saved;
     public ?string $black;
     public ?string $prices;
     public string $resource_link;
@@ -29,13 +30,18 @@ class BotDto
             'percent' => $this->percent,
             'version' => $this->version,
             'color' => $this->color,
+            'is_saved' => $this->is_saved,
             'black' => $this->black,
             'prices' => $this->prices,
 //            'resource_link' => $this->resource_link,
          ];
     }
 
-
-
-
+    public function getSettings(): array
+    {
+        return [
+            'color' => $this->color,
+            'is_saved' => $this->is_saved,
+        ];
+    }
 }
