@@ -49,10 +49,12 @@ class BotController extends Controller
                 $request->bot_id
             );
             return ApiHelpers::success(BotFactory::fromEntity($bot)->getArray());
-        } catch (\RuntimeException $r) {
-            BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
-            return ApiHelpers::error($r->getMessage());
-        } catch (\Exception $e) {
+        }
+//        catch (\RuntimeException $r) {
+//            BotLogHelpers::notifyBotLog('(🟠R '.__FUNCTION__.' Hub): ' . $r->getMessage());
+//            return ApiHelpers::error($r->getMessage());
+//        }
+        catch (\Exception $e) {
             BotLogHelpers::notifyBotLog('(🟠E '.__FUNCTION__.' Hub): ' . $e->getMessage());
             \Log::error($e->getMessage());
             return ApiHelpers::error('Module creation error');
