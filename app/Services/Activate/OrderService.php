@@ -414,6 +414,9 @@ class OrderService extends MainService
                         if (is_null($sms))
                             break;
                         $sms = json_encode($sms);
+                        if ($sms == '["SERVER_ERROR"]')
+                            $sms = null;
+
                         if (is_null($order->codes)) {
                             BottApi::createOrder($botDto, $userData, $order->price_final,
                                 'Заказ активации для номера ' . $order->phone .
