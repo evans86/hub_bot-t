@@ -417,7 +417,7 @@ class OrderService extends MainService
                         if ($sms == '["SERVER_ERROR"]')
                             $sms = null;
 
-                        if (is_null($order->codes)) {
+                        if (!is_null($order->codes)) {
                             BottApi::createOrder($botDto, $userData, $order->price_final,
                                 'Заказ активации для номера ' . $order->phone .
                                 ' с смс: ' . $sms);
