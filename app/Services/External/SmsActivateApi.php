@@ -346,13 +346,22 @@ class SmsActivateApi
         } else {
             $options = array(
                 'http' => array(
-                    'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'header' => "Content-type: application/x-www-form-urlencoded\r\n" .
+                        "User-Agent: Your-App/1.0\r\n",
                     'method' => 'POST',
                     'content' => $serializedData
                 )
             );
             $context = stream_context_create($options);
-            $result = file_get_contents($this->url, false, $context);
+
+            try {
+                $result = $this->sendRequest($serializedData, 1, 'POST', $context);
+            } catch (\Throwable $e) {
+                BotLogHelpers::notifyBotLog('(🔴E ' . __FUNCTION__ . ' Activate): ' . $e->getMessage());
+                \Log::error($e->getMessage());
+                throw new RuntimeException('Ошибка соединения с сервером!');
+            }
+//            $result = file_get_contents($this->url, false, $context);
             if ($getNumber == 1) {
                 return OrdersHelper::requestArray($result);
             }
