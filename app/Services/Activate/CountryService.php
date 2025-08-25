@@ -18,6 +18,7 @@ class CountryService extends MainService
         $smsActivate = new SmsActivateApi(config('services.key_activate.key'), BotService::DEFAULT_ACTIVATE_HOST);
 
         $countries = $smsActivate->getCountries();
+        dd($countries);
 
         $this->formingCountriesArr($countries);
     }
