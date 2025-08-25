@@ -36,6 +36,9 @@ class CountryService extends MainService
         $result = [];
 
         foreach ($countries as $key => $country) {
+            if ($country['id'] == 0) {
+                continue;
+            }
 
             array_push($result, [
                 'org_id' => $country['id'],
