@@ -36,4 +36,11 @@ return [
         'ref' => 5245236,
     ],
 
+    'bot_api_keys' => [
+        'modules_log_bot_1' => env('MODULES_LOG_BOT_1'),
+        'modules_log_bot_2' => env('MODULES_LOG_BOT_2'),
+        'cron_log_bot_1' => env('CRON_LOG_BOT_1'),
+        'cron_log_bot_2' => env('CRON_LOG_BOT_2'),
+    ],
+
 ];
